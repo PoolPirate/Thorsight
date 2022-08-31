@@ -1,0 +1,25 @@
+<mat-drawer-container class="app-container" autosize>
+  <mat-drawer #drawer mode="side">
+    <nav-component></nav-component>
+  </mat-drawer>
+  <div>
+    <button type="button" mat-button (click)="drawer.toggle()">
+      Toggle sidenav
+    </button>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Selected Position</mat-label>
+      <mat-select [formControl]="positionSelector">
+        <mat-option [value]="'all'">
+          All
+        </mat-option>
+        <mat-option *ngFor="let position of allOpenPositions" [value]="position.poolName">
+          {{ position.poolName }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <router-outlet></router-outlet>
+  </div>
+
+</mat-drawer-container>

@@ -1,0 +1,36 @@
+<div class="auto-grid">
+  <div class="asset-container">
+    <div class="half-width" [class.flex]="nonRuneAssets.length == 1">
+      <div *ngFor="let asset of nonRuneAssets" class="asset" style="background-color: {{ getAssetColor(asset.name) }}">
+        <b>{{ asset.amount }} {{ asset.displayName }}</b>
+        <p>{{ asset.value }}$</p>
+      </div>
+    </div>
+
+    <div class="half-width flex">
+      <div class="asset" style="background-color: {{ getAssetColor(runeAsset.name) }}">
+        <h3>{{ runeAsset.amount }} {{ runeAsset.displayName }}</h3>
+        <p>{{ runeAsset.value }}$</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="auto-grid">
+  <div class="statbox">
+    <h3>Total Deposited</h3>
+    {{ totalDeposited }} USD
+  </div>
+  <div class="statbox">
+    <h3>Total Withdrawn</h3>
+    {{ totalWithdrawn }} USD
+  </div>
+  <div class="statbox">
+    <h3>Current Value</h3>
+    {{ totalCurrent }} USD
+  </div>
+  <div class="statbox">
+    <h3>Total Gain / Loss</h3>
+    {{ totalGainLoss }} USD
+  </div>
+</div>

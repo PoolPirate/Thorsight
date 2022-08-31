@@ -1,0 +1,11 @@
+<h1>Enter your Thorchain Wallet Address</h1>
+
+<mat-form-field appearance="fill">
+  <mat-label>Enter address:</mat-label>
+  <input matInput type="text" [formControl]="addressControl">
+  <button *ngIf="addressControl.value" matSuffix mat-icon-button aria-label="Clear" (click)="addressControl.reset()">
+    <mat-icon>close</mat-icon>
+  </button>
+</mat-form-field>
+
+<button (click)="analyze()">Analyze</button>

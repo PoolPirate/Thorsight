@@ -1,0 +1,54 @@
+
+.auto-grid {
+  padding: 20px;
+  display: grid;
+  grid-gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+.stat-container {
+  padding: 20px;
+}
+
+.statbox {
+  border-radius: 10px;
+  border: 2px solid #A79F9F;
+  margin: 15px 15px 0px 15px;
+  padding: 10px;
+}
+
+.asset-container {
+  border-radius: 10px;
+  border: 2px solid #A79F9F;
+  margin: 15px;
+  display: inline-flex;
+  justify-content: space-between;
+}
+
+.asset {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  border-radius: 8px;
+  padding: 10px;
+  text-align: center;
+  margin: 0px;
+  color: black;
+  font-weight: bold;
+  width: 100%;
+}
+
+.asset * {
+  color: black;
+  font-weight: bold;
+  margin: 0px;
+}
+
+.half-width {
+  width: 50%;
+}
+
+.flex {
+  display: flex;
+}
