@@ -25,6 +25,19 @@ public class QueryController : ControllerBase
 
     [HttpGet("LiquidityPositions/{address}")]
     [ResponseCache(Duration = 120, Location = ResponseCacheLocation.Any)]
-    public IAsyncEnumerable<OpenPositionDto> GetOpenPositionsAsync(string address, CancellationToken cancellationToken)
-        => QueryClient.GetOpenPositionsAsync(address, cancellationToken);
+    public Task<OpenPositionDto[]> GetOpenPositionsAsync(string address, CancellationToken cancellationToken)
+        => QueryClient.GetCurrentPositionsAsync(address, cancellationToken);
+
+    [HttpGet("DailyPoolStats")]
+    [ResponseCache(Duration = 120, Location = ResponseCacheLocation.Any)]
+    public async Task<object> GetDailyPoolStatsAsync(CancellationToken cancellationToken)
+    {
+        var poolStatisticsDtos = await QueryClient.GetDailyPoolStatsAsync(cancellationToken);
+        return poolStatisticsDtos.OrderBy(x => x.Timestamp).ToArray();
+    }
+
+    [HttpGet("PositionHistory/{address}")]
+    [ResponseCache(Duration = 120, Location = ResponseCacheLocation.Any)]
+    public async Task<OpenPositionDto[]> GetPositionHistoryAsync(string address, CancellationToken cancellationToken)
+        => (await QueryClient.GetPositionHistoryAsync(address, cancellationToken)).OrderBy(x => x.Timestamp).ToArray();
 }

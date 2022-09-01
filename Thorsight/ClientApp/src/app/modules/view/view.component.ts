@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import { Component } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
 import { takeUntil } from 'rxjs';
@@ -25,6 +25,8 @@ export class ViewComponent extends BaseComponent {
 
     this.loadLiquidityActions(address);
     this.loadOpenPositions(address);
+    this.loadPoolStatistics();
+    this.loadLiquidityPositionHistories(address);
 
     this.positionSelector.valueChanges.subscribe(() => {
       this.viewCache.selected = this.positionSelector.value;
@@ -54,6 +56,30 @@ export class ViewComponent extends BaseComponent {
       )
       .subscribe(x => {
         this.viewCache.allOpenPositions = x;
+      }, err => {
+        alert("Failed loading data!");
+      });
+  }
+
+  loadPoolStatistics() {
+    this.queryService.getDailyPoolStats()
+      .pipe(
+        takeUntil(this.ngUnsubscribe)
+      )
+      .subscribe(x => {
+        this.viewCache.poolStats = x;
+      }, err => {
+        alert("Failed loading data!");
+      });
+  }
+
+  loadLiquidityPositionHistories(address: string) {
+    this.queryService.getLiquidtyPositionHistory(address)
+      .pipe(
+        takeUntil(this.ngUnsubscribe)
+      )
+      .subscribe(x => {
+        this.viewCache.allPositionHistories = x;
       }, err => {
         alert("Failed loading data!");
       });

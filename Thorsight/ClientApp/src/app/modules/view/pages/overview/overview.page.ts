@@ -2,6 +2,7 @@ import { Component } from "@angular/core";
 import { FormControl } from "@angular/forms";
 import { LiquidityAction, OpenPosition } from "../../../../core/models/models";
 import { QueryService } from "../../../../core/services/queryservice";
+import { ColorUtils } from "../../../../shared/utils/color-utils";
 import { ViewCacheService } from "../../services/view-cache.service";
 
 @Component({
@@ -68,34 +69,7 @@ export class OverviewPage {
   }
 
   getAssetColor(asset: string) {
-    switch (asset) {
-      case "THOR.RUNE":
-        return "#12DEDA";
-    }
-
-    if (asset.startsWith("BTC.")) {
-      return "#dda356";
-    }
-    if (asset.startsWith("ETH.")) {
-      return "#9382e1";
-    }
-    if (asset.startsWith("BNB.")) {
-      return "#bdb357";
-    }
-    if (asset.startsWith("LTC.")) {
-      return "#5F93CE"
-    }
-    if (asset.startsWith("BCH.")) {
-      return "#8FC473";
-    }
-    if (asset.startsWith("DOGE.")) {
-      return "#C6A555";
-    }
-    if (asset.startsWith("GAIA.")) {
-      return "#2e3148";
-    }
-
-    return "#FFFD5A";
+    return ColorUtils.getAssetColor(asset);
   }
 }
 

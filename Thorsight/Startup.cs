@@ -46,7 +46,7 @@ public class Startup
 
         app.UseStaticFiles();
 
-        app.UseResponseCaching();        
+        //app.UseResponseCaching();        
 
         app.UseRouting();
 

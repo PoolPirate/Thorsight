@@ -1,5 +1,5 @@
 export class LiquidityAction {
-  blockTimestamp!: Date;
+  blockTimestamp!: string;
   action!: string;
   poolName!: string;
 
@@ -8,10 +8,24 @@ export class LiquidityAction {
 }
 
 export class OpenPosition {
+  timestamp!: string;
   poolName!: string;
   currentStakeUnits!: number;
   totalStakeUnits!: number;
   valueUSD!: number;
   assetAmount!: number;
   runeAmount!: number;
+}
+
+export class PoolStatistics {
+  timestamp!: string;
+  poolName!: string;
+  runeDepth!: number;
+  assetDepth!: number;
+  assetPrice!: number;
+  units!: number;
+}
+
+export class Balance {
+  
 }

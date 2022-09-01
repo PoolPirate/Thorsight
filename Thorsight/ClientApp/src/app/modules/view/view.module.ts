@@ -7,6 +7,7 @@ import { SharedModule } from "../../shared/shared.module";
 import { RouterModule } from "@angular/router";
 import * as AppRoutingModule from '../../app-routing.module';
 import { ViewCacheService } from "./services/view-cache.service";
+import { AssetWorthGraph } from "./pages/overview/components/assert-worth-graph/asset-worth.graph";
 
 @NgModule({
   declarations: [
@@ -14,7 +15,8 @@ import { ViewCacheService } from "./services/view-cache.service";
     OverviewPage,
     EarningsPage,
 
-    NavComponent
+    NavComponent,
+    AssetWorthGraph
   ],
   imports: [
     SharedModule,
