@@ -25,7 +25,7 @@ export class ViewComponent extends BaseComponent {
 
     this.loadLiquidityActions(address);
     this.loadOpenPositions(address);
-    this.loadPoolStatistics();
+    //this.loadPoolStatistics();
     this.loadLiquidityPositionHistories(address);
 
     this.positionSelector.valueChanges.subscribe(() => {

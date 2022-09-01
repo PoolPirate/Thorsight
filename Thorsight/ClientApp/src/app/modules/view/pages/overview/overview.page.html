@@ -1,4 +1,6 @@
-<h1>Statistics</h1>
+
+<h1 *ngIf="openPositions.length == 1">Position</h1>
+<h1 *ngIf="openPositions.length != 1">Positions</h1>
 
 <div class="auto-grid">
   <div class="asset-container">
@@ -18,7 +20,7 @@
   </div>
 </div>
 
-<h1>Asset Value</h1>
+<h1>All-Time Statistics</h1>
 
 <div class="auto-grid">
   <div class="statbox">
@@ -38,5 +40,7 @@
     {{ totalGainLoss }} USD
   </div>
 </div>
+
+<h1>Asset Value</h1>
 
 <asset-worth-graph></asset-worth-graph>

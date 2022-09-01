@@ -19,9 +19,9 @@ export class ViewCacheService {
   get allPositionHistories() {
     return this._allPositionHistories;
   }
-  get poolStats() {
-    return this._poolStats;
-  }
+  //get poolStats() {
+  //  return this._poolStats;
+  //}
   set allActions(value: LiquidityAction[] | null) {
     this._allActions = value;
     this.contentUpdatedSubject.next();

@@ -17,27 +17,28 @@ public class QueryController : ControllerBase
 
     [HttpGet("LiquidityActions/{address}")]
     [ResponseCache(Duration = 120, Location = ResponseCacheLocation.Any)]
-    public async Task<LiquidityActionDto[]> GetLiquidityActionsAsync(string address, CancellationToken cancellationToken)
-    {
-        var liquidityActions = await QueryClient.GetLiquidityActionsAsync(address, cancellationToken);
-        return liquidityActions.OrderBy(x => x.BlockTimestamp).ToArray();
-    }
+    public async Task<IEnumerable<LiquidityActionDto>> GetLiquidityActionsAsync(string address, CancellationToken cancellationToken)
+        => (await QueryClient.GetLiquidityActionsAsync(address, cancellationToken))
+            .OrderBy(x => x.BlockTimestamp)
+            .ThenBy(x => x.PoolName);
 
     [HttpGet("LiquidityPositions/{address}")]
     [ResponseCache(Duration = 120, Location = ResponseCacheLocation.Any)]
-    public Task<OpenPositionDto[]> GetOpenPositionsAsync(string address, CancellationToken cancellationToken)
-        => QueryClient.GetCurrentPositionsAsync(address, cancellationToken);
+    public async Task<IEnumerable<OpenPositionDto>> GetOpenPositionsAsync(string address, CancellationToken cancellationToken)
+        => (await QueryClient.GetCurrentPositionsAsync(address, cancellationToken))
+            .OrderBy(x => x.PoolName);
 
     [HttpGet("DailyPoolStats")]
     [ResponseCache(Duration = 120, Location = ResponseCacheLocation.Any)]
-    public async Task<object> GetDailyPoolStatsAsync(CancellationToken cancellationToken)
-    {
-        var poolStatisticsDtos = await QueryClient.GetDailyPoolStatsAsync(cancellationToken);
-        return poolStatisticsDtos.OrderBy(x => x.Timestamp).ToArray();
-    }
+    public async Task<IEnumerable<PoolStatisticsDto>> GetDailyPoolStatsAsync(CancellationToken cancellationToken)
+        => (await QueryClient.GetDailyPoolStatsAsync(cancellationToken))
+            .OrderBy(x => x.Timestamp)
+            .ThenBy(x => x.PoolName);
 
     [HttpGet("PositionHistory/{address}")]
     [ResponseCache(Duration = 120, Location = ResponseCacheLocation.Any)]
-    public async Task<OpenPositionDto[]> GetPositionHistoryAsync(string address, CancellationToken cancellationToken)
-        => (await QueryClient.GetPositionHistoryAsync(address, cancellationToken)).OrderBy(x => x.Timestamp).ToArray();
+    public async Task<IEnumerable<OpenPositionDto>> GetPositionHistoryAsync(string address, CancellationToken cancellationToken)
+        => (await QueryClient.GetPositionHistoryAsync(address, cancellationToken))
+            .OrderBy(x => x.Timestamp)
+            .ThenBy(x => x.PoolName);
 }

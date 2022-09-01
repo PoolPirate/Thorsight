@@ -38,7 +38,7 @@ export class AssetWorthGraph extends BaseComponent {
   }
 
   get isLoading() {
-    return this.viewCache.allPositionHistories == null || this.viewCache.poolStats == null;
+    return this.viewCache.allPositionHistories == null;
   }
 
   onlyUnique(value: string, index: number, self: string[]) {
@@ -48,7 +48,7 @@ export class AssetWorthGraph extends BaseComponent {
   initialize() {
     this.initialized = true;
 
-    this.pools = this.viewCache.positionHistories.map(x => x.poolName).filter(this.onlyUnique);
+    this.pools = this.viewCache.positionHistories.map(x => x.poolName).filter(this.onlyUnique).reverse();
     this.timestamps = this.viewCache.positionHistories!.map(x => x.timestamp).filter(this.onlyUnique);
 
     this.poolValues = this.pools.map(pool => {
