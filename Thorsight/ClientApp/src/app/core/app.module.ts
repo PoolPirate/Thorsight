@@ -5,7 +5,6 @@ import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { AppRoutingModule } from "../app-routing.module";
 import { AppComponent } from "./app.component";
 import { SharedModule } from "../shared/shared.module";
-import { Flipside } from "@flipsidecrypto/sdk";
 import { QueryService } from "./services/queryservice";
 import { HomePage } from "./pages/home/home.page";
 import { FooterComponent } from "./components/footer/footer.component";
@@ -26,13 +25,6 @@ import { FooterComponent } from "./components/footer/footer.component";
     HttpClientModule,
   ],
   providers: [
-    {
-      provide: Flipside,
-      useFactory: () => new Flipside(
-        "8faeb2f9-8e14-4481-91f3-e713c1038e8c",
-        "https://node-api.flipsidecrypto.com"
-      )
-    },
     QueryService
   ],
   bootstrap: [AppComponent]

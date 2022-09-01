@@ -28,13 +28,6 @@ public class QueryController : ControllerBase
         => (await QueryClient.GetCurrentPositionsAsync(address, cancellationToken))
             .OrderBy(x => x.PoolName);
 
-    [HttpGet("DailyPoolStats")]
-    [ResponseCache(Duration = 120, Location = ResponseCacheLocation.Any)]
-    public async Task<IEnumerable<PoolStatisticsDto>> GetDailyPoolStatsAsync(CancellationToken cancellationToken)
-        => (await QueryClient.GetDailyPoolStatsAsync(cancellationToken))
-            .OrderBy(x => x.Timestamp)
-            .ThenBy(x => x.PoolName);
-
     [HttpGet("PositionHistory/{address}")]
     [ResponseCache(Duration = 120, Location = ResponseCacheLocation.Any)]
     public async Task<IEnumerable<OpenPositionDto>> GetPositionHistoryAsync(string address, CancellationToken cancellationToken)

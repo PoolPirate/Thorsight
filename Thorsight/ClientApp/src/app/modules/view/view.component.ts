@@ -25,7 +25,6 @@ export class ViewComponent extends BaseComponent {
 
     this.loadLiquidityActions(address);
     this.loadOpenPositions(address);
-    //this.loadPoolStatistics();
     this.loadLiquidityPositionHistories(address);
 
     this.positionSelector.valueChanges.subscribe(() => {
@@ -56,18 +55,6 @@ export class ViewComponent extends BaseComponent {
       )
       .subscribe(x => {
         this.viewCache.allOpenPositions = x;
-      }, err => {
-        alert("Failed loading data!");
-      });
-  }
-
-  loadPoolStatistics() {
-    this.queryService.getDailyPoolStats()
-      .pipe(
-        takeUntil(this.ngUnsubscribe)
-      )
-      .subscribe(x => {
-        this.viewCache.poolStats = x;
       }, err => {
         alert("Failed loading data!");
       });

@@ -61,17 +61,6 @@ public class QueryClient : Singleton
         return positionDtos.ToArray();
     }
 
-    public async Task<PoolStatisticsDto[]> GetDailyPoolStatsAsync(CancellationToken cancellationToken)
-    {
-        string sql =
-            "SELECT day, asset, rune_depth, asset_depth, total_stake, asset_price, asset_price_usd " +
-            "FROM flipside_prod_db.thorchain.pool_block_statistics " +
-            "WHERE day > CURRENT_DATE - 30";
-
-        var poolStatistics = await Flipside.RunQueryAsync<PoolStatistics>(sql, cancellationToken: cancellationToken);
-        return poolStatistics.Select(x => new PoolStatisticsDto(x.Timestamp, x.PoolName, x.RuneDepth, x.AssetDepth, x.Units, x.AssetPrice, x.AssetPriceUSD)).ToArray();
-    }
-
     public async Task<OpenPositionDto[]> GetPositionHistoryAsync(string address, CancellationToken cancellationToken)
     {
         string sql =
@@ -90,31 +79,41 @@ public class QueryClient : Singleton
             "FROM days JOIN pools p";
 
         var positionHistory = await Flipside.RunQueryAsync<OpenPosition>(sql, cancellationToken: cancellationToken);
-        var poolStats = await GetDailyPoolStatsAsync(cancellationToken);
 
         var pools = new Dictionary<string, PoolInfo?>();
         var positionDtos = new List<OpenPositionDto>();
 
-        foreach (var position in positionHistory)
+
+        foreach(var poolTypeGrouping in positionHistory.GroupBy(x => x.PoolName))
         {
-            var pool = poolStats.FirstOrDefault(x => x.PoolName == position.PoolName && x.Timestamp == position.Timestamp);
+            string poolName = poolTypeGrouping.Key;  
+            var poolHistory = await Midgard.GetPoolDepthPriceHistory(poolName, 30);
 
-            var k = poolStats.Where(x => x.PoolName == position.PoolName).ToArray();
-            var k2 = poolStats.Where(x => x.Timestamp == position.Timestamp).ToArray();
-
-            if (pool == null)
+            if (poolHistory is null)
             {
                 continue;
             }
 
-            decimal poolShare = (decimal)position.CurrentStakeUnits / pool.Units;
+            foreach(var position in poolTypeGrouping)
+            {
+                var poolBalance = poolHistory.FirstOrDefault(x => x.StartTime.DateTime == position.Timestamp.DateTime);
 
-            decimal runeAmount = pool.RuneDepth * poolShare / 100000000;
-            decimal assetAmount = runeAmount / pool.AssetPrice;
+                if (poolBalance is null)
+                {
+                    Logger.LogWarning("Missing pool history value!");
+                    continue;
+                }
 
-            decimal valueUSD = 2 * assetAmount * pool.AssetPriceUSD;
+                decimal poolShare = (decimal)position.CurrentStakeUnits / poolBalance.Units;
 
-            positionDtos.Add(new OpenPositionDto(position.Timestamp, position.PoolName, position.CurrentStakeUnits, pool.Units, valueUSD, assetAmount, runeAmount));
+                decimal runeAmount = poolBalance.RuneDepth * poolShare / 100000000;
+                decimal assetAmount = runeAmount / poolBalance.AssetPrice;
+
+                decimal valueUSD = 2 * assetAmount * poolBalance.AssetPriceUSD;
+
+                var dto = new OpenPositionDto(position.Timestamp, position.PoolName, position.CurrentStakeUnits, poolBalance.Units, valueUSD, assetAmount, runeAmount);
+                positionDtos.Add(dto);
+            }
         }
 
         return positionDtos.ToArray();

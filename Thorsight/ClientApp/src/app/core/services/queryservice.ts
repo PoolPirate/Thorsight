@@ -15,28 +15,21 @@ export class QueryService {
   public getLiquidityActions(address: string): Observable<LiquidityAction[]> {
     return this.httpClient.get<LiquidityAction[]>(this.apiUrl + "LiquidityActions/" + address)
       .pipe(
-        timeout(20000),
+        timeout(60000),
       );
   }
 
   public getOpenLiquidityPositions(address: string): Observable<OpenPosition[]> {
     return this.httpClient.get<OpenPosition[]>(this.apiUrl + "LiquidityPositions/" + address)
       .pipe(
-        timeout(20000),
-      );
-  }
-
-  public getDailyPoolStats(): Observable<PoolStatistics[]> {
-    return this.httpClient.get<PoolStatistics[]>(this.apiUrl + "DailyPoolStats")
-      .pipe(
-        timeout(20000),
+        timeout(60000),
       );
   }
 
   public getLiquidtyPositionHistory(address: string): Observable<OpenPosition[]> {
     return this.httpClient.get<OpenPosition[]>(this.apiUrl + "PositionHistory/" + address)
       .pipe(
-        timeout(20000),
+        timeout(60000),
       );
   }
 }
