@@ -22,5 +22,12 @@ app-root {
 }
 
 view-root {
-  min-height: 100vh; 
+  min-height: 100vh;
+}
+
+home-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }

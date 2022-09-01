@@ -1,0 +1,30 @@
+.home-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 30px;
+}
+
+.home-container div {
+  padding: 15px;
+}
+
+.home-container h1 {
+  padding: 15px;
+}
+
+
+mat-form-field {
+  width: 70%;
+  font-size: 18px;
+}
+
+button {
+  font-size: 16px;
+  padding: 5px 25px 5px 25px;
+}
+
+img {
+  width: min(60vh, 70vw);
+}
