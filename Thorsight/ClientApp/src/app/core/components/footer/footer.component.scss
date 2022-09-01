@@ -1,0 +1,30 @@
+.credits-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0px 20px 0px 20px;
+  height: 2rem;
+}
+
+.credit-box {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+  height: inherit;
+}
+
+.spacer {
+    width: 10px;
+}
+
+img {
+  height: inherit;
+}
+
+hr {
+  margin-top: 0px;
+}
+
+a {
+    height: inherit;
+}

@@ -10,5 +10,18 @@ html, body {
 body {
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
-  background-color: #0d1117;
+  background-color: #303030;
+}
+
+app-root {
+  display: flex;
+  flex-direction: column;
+  height: fit-content;
+  min-height: 100%;
+  justify-content: space-between;
+}
+
+view-root {
+  /*Leave space for the footer*/
+  min-height: calc(100vw-2rem); 
 }

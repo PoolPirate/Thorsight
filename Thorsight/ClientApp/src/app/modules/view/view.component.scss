@@ -1,7 +1,7 @@
-.app-container {
-  height: 100vh;
+.container {
+  padding: 20px;
 }
 
-.container {
-    padding: 20px;
+mat-drawer-content {
+  overflow-x: hidden;
 }

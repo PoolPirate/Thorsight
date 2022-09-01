@@ -8,12 +8,14 @@ import { SharedModule } from "../shared/shared.module";
 import { Flipside } from "@flipsidecrypto/sdk";
 import { QueryService } from "./services/queryservice";
 import { HomePage } from "./pages/home/home.page";
+import { FooterComponent } from "./components/footer/footer.component";
 
 @NgModule({
   declarations: [
     AppComponent,
+    FooterComponent,
 
-    HomePage
+    HomePage,
   ],
   imports: [
     BrowserModule,
