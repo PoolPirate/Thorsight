@@ -10,8 +10,12 @@ import { MatSelectModule } from "@angular/material/select";
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { NgxEchartsModule } from 'ngx-echarts';
+import { FooterComponent } from "./components/footer/footer.component";
 
 @NgModule({
+  declarations: [
+    FooterComponent,
+  ],
   imports: [
     CommonModule,
     FormsModule,
@@ -48,7 +52,9 @@ import { NgxEchartsModule } from 'ngx-echarts';
     MatCardModule,
     MatProgressSpinnerModule,
 
-    NgxEchartsModule
+    NgxEchartsModule,
+
+    FooterComponent
   ],
   providers: [
 

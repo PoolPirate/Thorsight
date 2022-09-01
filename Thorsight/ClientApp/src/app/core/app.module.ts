@@ -7,12 +7,11 @@ import { AppComponent } from "./app.component";
 import { SharedModule } from "../shared/shared.module";
 import { QueryService } from "./services/queryservice";
 import { HomePage } from "./pages/home/home.page";
-import { FooterComponent } from "./components/footer/footer.component";
+import { FooterComponent } from "../shared/components/footer/footer.component";
 
 @NgModule({
   declarations: [
     AppComponent,
-    FooterComponent,
 
     HomePage,
   ],

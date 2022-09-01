@@ -5,3 +5,19 @@
 mat-drawer-content {
   overflow-x: hidden;
 }
+
+mat-drawer {
+  position: fixed;
+}
+
+mat-drawer-container {
+  min-height: 100vh;
+}
+
+mat-drawer-content {
+  display: flex;
+  flex-direction: column;
+  height: fit-content;
+  min-height: 100vh;
+  justify-content: space-between;
+}

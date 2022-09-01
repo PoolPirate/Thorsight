@@ -5,13 +5,14 @@ import { NgxEchartsDirective } from 'ngx-echarts';
 import { ColorUtils } from "../../../../../../shared/utils/color-utils";
 import { BaseComponent } from "../../../../../../shared/component/base.component";
 import { takeUntil } from "rxjs";
+import { OnInit } from "@angular/core";
 
 @Component({
   selector: 'asset-amount-graph',
   templateUrl: './asset-amount.graph.html',
   styleUrls: ['./asset-amount.graph.scss'],
 })
-export class AssetAmountGraph extends BaseComponent {
+export class AssetAmountGraph extends BaseComponent implements OnInit {
   pools: string[] = [];
   timestamps: string[] = [];
   poolValues: SeriesOption[] = [];
@@ -36,6 +37,12 @@ export class AssetAmountGraph extends BaseComponent {
           this.initialize();
         }
       });
+  }
+
+  ngOnInit(): void {
+    if (!this.isLoading && !this.initialized) {
+      this.initialize();
+    }
   }
 
   get isLoading() {
@@ -78,8 +85,6 @@ export class AssetAmountGraph extends BaseComponent {
       color: ColorUtils.getAssetColor("THOR.RUNE")
     };
 
-    console.log(runeSeries);
-
     this.poolValues.push(runeSeries);
 
 
@@ -113,7 +118,5 @@ export class AssetAmountGraph extends BaseComponent {
       ],
       series: this.poolValues
     };
-
-    console.log(this.options);
   }
 }

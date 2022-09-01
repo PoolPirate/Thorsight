@@ -1,17 +1,18 @@
-import { Component, ViewChild, ViewChildren } from "@angular/core";
+import { AfterViewInit, Component, ViewChild, ViewChildren } from "@angular/core";
 import { ViewCacheService } from "../../../../services/view-cache.service";
 import { EChartsOption, SeriesOption, ECharts } from 'echarts';
 import { NgxEchartsDirective } from 'ngx-echarts';
 import { ColorUtils } from "../../../../../../shared/utils/color-utils";
 import { BaseComponent } from "../../../../../../shared/component/base.component";
 import { takeUntil } from "rxjs";
+import { OnInit } from "@angular/core";
 
 @Component({
   selector: 'asset-worth-graph',
   templateUrl: './asset-worth.graph.html',
   styleUrls: ['./asset-worth.graph.scss'],
 })
-export class AssetWorthGraph extends BaseComponent {
+export class AssetWorthGraph extends BaseComponent implements OnInit {
   pools: string[] = [];
   timestamps: string[] = [];
   poolValues: SeriesOption[] = [];
@@ -35,6 +36,12 @@ export class AssetWorthGraph extends BaseComponent {
           this.initialize();
         }
       });
+  }
+
+  ngOnInit(): void {
+    if (!this.isLoading && !this.initialized) {
+      this.initialize();
+    }
   }
 
   get isLoading() {
@@ -94,7 +101,5 @@ export class AssetWorthGraph extends BaseComponent {
       ],
       series: this.poolValues
     };
-
-    console.log(this.options);
   }
 }

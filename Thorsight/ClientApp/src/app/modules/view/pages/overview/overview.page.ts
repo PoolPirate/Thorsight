@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { FormControl } from "@angular/forms";
 import { LiquidityAction, OpenPosition } from "../../../../core/models/models";
 import { QueryService } from "../../../../core/services/queryservice";

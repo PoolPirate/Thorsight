@@ -22,6 +22,5 @@ app-root {
 }
 
 view-root {
-  /*Leave space for the footer*/
-  min-height: calc(100vh - 50px); 
+  min-height: 100vh; 
 }
