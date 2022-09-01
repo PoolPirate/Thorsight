@@ -1,9 +1,12 @@
+.m-top {
+  margin-top: 20px;
+  margin-bottom: 0px;
+}
 
 .auto-grid {
   display: grid;
   grid-gap: 20px;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  margin-bottom: 2rem;
   padding: 0px 20px 0px 20px;
 }
 
