@@ -1,5 +1,5 @@
 <div class="home-container">
-  <img src="assets/thorchain.png"/>
+  <img src="assets/thorchain.png" />
   <h1>Enter your Thorchain Wallet Address</h1>
 
   <mat-form-field appearance="fill">
@@ -9,6 +9,9 @@
       <mat-icon>close</mat-icon>
     </button>
   </mat-form-field>
+  <mat-error *ngIf="addressControl.touched">
+    {{ addressControl.hasError('address') ? addressControl.getError('address') : '' }}
+  </mat-error>
 
   <button mat-raised-button (click)="analyze()">Analyze</button>
 </div>
