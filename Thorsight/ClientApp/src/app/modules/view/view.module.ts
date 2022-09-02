@@ -9,6 +9,7 @@ import * as AppRoutingModule from '../../app-routing.module';
 import { ViewCacheService } from "./services/view-cache.service";
 import { AssetWorthGraph } from "./pages/overview/components/assert-worth-graph/asset-worth.graph";
 import { AssetAmountGraph } from "./pages/overview/components/asset-amount-graph/asset-amount.graph";
+import { LuviGraph } from "./pages/earnings/components/luvi-graph/luvi.graph";
 
 @NgModule({
   declarations: [
@@ -19,6 +20,7 @@ import { AssetAmountGraph } from "./pages/overview/components/asset-amount-graph
     NavComponent,
     AssetWorthGraph,
     AssetAmountGraph,
+    LuviGraph
   ],
   imports: [
     SharedModule,
