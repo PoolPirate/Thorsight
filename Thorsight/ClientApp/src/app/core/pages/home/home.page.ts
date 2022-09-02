@@ -11,7 +11,9 @@ import { ThorValidators } from "../../../shared/validators/ThorValidators";
 export class HomePage {
   addressControl: FormControl = new FormControl("", [Validators.required, ThorValidators.address]);
 
-  constructor(private router: Router) { }
+  constructor(private router: Router) {
+    this.addressControl.setValue(localStorage.getItem("address") ?? "");
+  }
 
   analyze() {
     this.addressControl.markAllAsTouched();
@@ -21,6 +23,8 @@ export class HomePage {
     }
 
     const address = this.addressControl.value.trim();
+
+    localStorage.setItem("address", address);
     this.router.navigate([address]);
   }
 }
