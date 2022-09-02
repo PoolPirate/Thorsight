@@ -73,10 +73,11 @@ export class AssetAmountGraph extends BaseComponent implements OnInit {
 
         return position.assetAmount
       });
+      console.log(values.length);
       const temp: SeriesOption = {
         name: pool,
         type: 'line',
-        data: values,
+        data: values.map(x => x == 0 ? "" : x),
         color: ColorUtils.getAssetColor(pool)
       };
       return temp;
@@ -85,7 +86,7 @@ export class AssetAmountGraph extends BaseComponent implements OnInit {
     const runeSeries: SeriesOption = {
       name: "THOR.RUNE",
       type: 'line',
-      data: this.runeValues,
+      data: this.runeValues.map(x => x ),
       color: ColorUtils.getAssetColor("THOR.RUNE")
     };
 
@@ -117,10 +118,14 @@ export class AssetAmountGraph extends BaseComponent implements OnInit {
       ],
       yAxis: [
         {
-          type: 'log'
+          type: 'log',
+          logBase: 10,
+          
         }
       ],
       series: this.poolValues
     };
+
+    this.element.refreshChart();
   }
 }
