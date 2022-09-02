@@ -62,8 +62,16 @@ export class AssetWorthGraph extends BaseComponent implements OnInit {
     this.pools = this.viewCache.positionHistories!.map(x => x.poolName).filter(this.onlyUnique).reverse();
     this.timestamps = this.viewCache.positionHistories!.map(x => x.timestamp).filter(this.onlyUnique);
 
+    const breakEvenPrices: number[] = [];
+
     this.poolValues = this.pools.map(pool => {
-      const values = this.viewCache.positionHistories!.filter(stat => stat.poolName == pool).map(x => x.valueUSD);
+      const values = this.viewCache.positionHistories!.filter(stat => stat.poolName == pool).map((position, i, _) => {
+        breakEvenPrices[i] = breakEvenPrices[i] > 0
+          ? breakEvenPrices[i] + position.breakEvenPrice * position.currentStakeUnits
+          : position.breakEvenPrice * position.currentStakeUnits;
+
+        return position.valueUSD;
+      });
       const temp: SeriesOption = {
         name: pool,
         type: 'line',
@@ -73,7 +81,14 @@ export class AssetWorthGraph extends BaseComponent implements OnInit {
         color: ColorUtils.getAssetColor(pool)
       };
       return temp;
-    })
+    });
+
+    this.poolValues.push({
+      name: "Break Even",
+      type: 'line',
+      data: breakEvenPrices,
+      color: 'green'
+    });
 
     this.options = {
       tooltip: {

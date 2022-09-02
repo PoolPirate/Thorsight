@@ -1,12 +1,12 @@
 import { Injectable } from "@angular/core";
 import { Observable, Subject } from "rxjs";
-import { LiquidityAction, OpenPosition, PoolStatistics } from "../../../core/models/models";
+import { LiquidityAction, OpenPosition, PoolStatistics, PositionSnapshot } from "../../../core/models/models";
 
 @Injectable()
 export class ViewCacheService {
   private _allActions: LiquidityAction[] | null = null;
   private _allOpenPositions: OpenPosition[] | null = null;
-  private _allPositionHistories: OpenPosition[] | null = null;
+  private _allPositionHistories: PositionSnapshot[] | null = null;
   private _selected: string | "all" = "all";
   private _poolStats: PoolStatistics[] | null = null;
 
@@ -30,7 +30,7 @@ export class ViewCacheService {
     this._allOpenPositions = value;
     this.contentUpdatedSubject.next();
   }
-  set allPositionHistories(value: OpenPosition[] | null) {
+  set allPositionHistories(value: PositionSnapshot[] | null) {
     this._allPositionHistories = value;
     this.contentUpdatedSubject.next();
   }
@@ -69,7 +69,7 @@ export class ViewCacheService {
     return this.allOpenPositions.filter(x => x.poolName == this.selected);
   }
 
-  get positionHistories(): OpenPosition[] | null {
+  get positionHistories(): PositionSnapshot[] | null {
     if (this.selected == "all" || this.allPositionHistories == null) {
       return this.allPositionHistories;
     }

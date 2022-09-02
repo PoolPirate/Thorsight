@@ -79,11 +79,11 @@ public class FlipsideClient : Singleton
 
         if (!response.IsSuccessStatusCode)
         {
-            string errorMessage = await response.Content.ReadAsStringAsync();
+            string errorMessage = await response.Content.ReadAsStringAsync(cancellationToken);
             throw new Exception($"Flipside responded with {response.StatusCode}: {errorMessage}");
         }
 
-        var result = await response.Content.ReadFromJsonAsync<QueryResultsResult>();
+        var result = await response.Content.ReadFromJsonAsync<QueryResultsResult>(cancellationToken: cancellationToken);
 
         return result?.Status != "finished" 
             ? null 

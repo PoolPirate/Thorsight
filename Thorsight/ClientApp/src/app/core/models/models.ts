@@ -17,6 +17,17 @@ export class OpenPosition {
   runeAmount!: number;
 }
 
+export class PositionSnapshot {
+  timestamp!: string;
+  poolName!: string;
+  currentStakeUnits!: number;
+  totalStakeUnits!: number;
+  breakEvenPrice!: number;
+  valueUSD!: number;
+  assetAmount!: number;
+  runeAmount!: number;
+}
+
 export class PoolStatistics {
   timestamp!: string;
   poolName!: string;

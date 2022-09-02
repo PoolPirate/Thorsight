@@ -30,7 +30,7 @@ public class QueryController : ControllerBase
 
     [HttpGet("PositionHistory/{address}")]
     [ResponseCache(Duration = 120, Location = ResponseCacheLocation.Any)]
-    public async Task<IEnumerable<OpenPositionDto>> GetPositionHistoryAsync(string address, CancellationToken cancellationToken)
+    public async Task<IEnumerable<PositionSnapshotDto>> GetPositionHistoryAsync(string address, CancellationToken cancellationToken)
         => (await QueryClient.GetPositionHistoryAsync(address, cancellationToken))
             .OrderBy(x => x.Timestamp)
             .ThenBy(x => x.PoolName);

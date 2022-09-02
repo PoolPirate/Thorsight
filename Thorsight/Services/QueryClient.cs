@@ -61,7 +61,7 @@ public class QueryClient : Singleton
         return positionDtos.ToArray();
     }
 
-    public async Task<OpenPositionDto[]> GetPositionHistoryAsync(string address, CancellationToken cancellationToken)
+    public async Task<PositionSnapshotDto[]> GetPositionHistoryAsync(string address, CancellationToken cancellationToken)
     {
         string sql =
             "WITH lp_actions AS ( " +
@@ -74,20 +74,22 @@ public class QueryClient : Singleton
             "days AS ( " +
             "SELECT date_day AS day " +
             "FROM crosschain.core.dim_dates " +
-            "WHERE date_day > CURRENT_DATE - 30 AND date_day < CURRENT_DATE ) " +
-            "SELECT day, p.pool_name, COALESCE((SELECT sum(CASE WHEN LP_ACTION = 'add_liquidity' THEN units ELSE -units END) FROM lp_actions a WHERE block_timestamp <= day AND a.pool_name = p.pool_name), 0) AS current_stake_units " +
+            "WHERE date_day > CURRENT_DATE - 60 AND date_day < CURRENT_DATE ) " +
+            "SELECT day, p.pool_name, " +
+            "COALESCE((SELECT sum(CASE WHEN LP_ACTION = 'add_liquidity' THEN units ELSE -units END) FROM lp_actions a WHERE block_timestamp <= day AND a.pool_name = p.pool_name), 0) AS current_stake_units, " +
+            "CASE WHEN current_stake_units = 0 THEN 0 ELSE COALESCE((SELECT sum(CASE WHEN LP_ACTION = 'add_liquidity' THEN units * price_per_unit ELSE -units * price_per_unit END) FROM lp_actions a WHERE block_timestamp <= day AND a.pool_name = p.pool_name), 0) / current_stake_units END AS break_even_price_per_unit " +
             "FROM days JOIN pools p";
 
-        var positionHistory = await Flipside.RunQueryAsync<OpenPosition>(sql, cancellationToken: cancellationToken);
+        var positionHistory = await Flipside.RunQueryAsync<PositionSnapshot>(sql, cancellationToken: cancellationToken);
 
         var pools = new Dictionary<string, PoolInfo?>();
-        var positionDtos = new List<OpenPositionDto>();
+        var positionDtos = new List<PositionSnapshotDto>();
 
 
         foreach(var poolTypeGrouping in positionHistory.GroupBy(x => x.PoolName))
         {
             string poolName = poolTypeGrouping.Key;  
-            var poolHistory = await Midgard.GetPoolDepthPriceHistory(poolName, 30);
+            var poolHistory = await Midgard.GetPoolDepthPriceHistory(poolName, 60);
 
             if (poolHistory is null)
             {
@@ -111,7 +113,8 @@ public class QueryClient : Singleton
 
                 decimal valueUSD = 2 * assetAmount * poolBalance.AssetPriceUSD;
 
-                var dto = new OpenPositionDto(position.Timestamp, position.PoolName, position.CurrentStakeUnits, poolBalance.Units, valueUSD, assetAmount, runeAmount);
+                var dto = new PositionSnapshotDto(position.Timestamp, position.PoolName, position.CurrentStakeUnits, poolBalance.Units, 
+                    valueUSD, position.BreakEvenPrice, assetAmount, runeAmount);
                 positionDtos.Add(dto);
             }
         }
