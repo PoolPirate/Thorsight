@@ -1,5 +1,6 @@
 .container {
   padding: 20px;
+  margin-top: 50px;
 }
 
 mat-drawer-content {
@@ -8,6 +9,8 @@ mat-drawer-content {
 
 mat-drawer {
   position: fixed;
+  min-width: 250px;
+  background-color: #303030;
 }
 
 mat-drawer-container {
@@ -20,4 +23,29 @@ mat-drawer-content {
   height: fit-content;
   min-height: 100vh;
   justify-content: space-between;
+}
+
+#sidebartoggle {
+  position: fixed;
+  margin: 10px;
+}
+
+.position-selector-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+mat-form-field {
+  width: 75%;
+}
+
+.heading {
+  position: fixed;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+  align-content: center;
+  background-color: #12DEDA;
 }

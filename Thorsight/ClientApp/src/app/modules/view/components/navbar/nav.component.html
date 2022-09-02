@@ -1,4 +1,15 @@
+<div class="heading">
+  <button id="sidebartoggle" type="button" mat-button (click)="emitDrawerToggle()">
+    <mat-icon>dehaze</mat-icon>
+  </button>
+  <h1>Thorsight</h1>
+</div>
+
+
 <div class="link-container">
   <a [routerLink]="'overview'">Overview</a>
+  <hr />
   <a [routerLink]="'earnings'">Earnings</a>
+  <hr class="push-down" />
+  <a  [routerLink]="''">Change Address</a>
 </div>
