@@ -2,7 +2,7 @@
 <h1 *ngIf="openPositions.length == 1">Position</h1>
 <h1 *ngIf="openPositions.length != 1">Positions</h1>
 
-<div class="auto-grid">
+<div *ngIf="openPositionsReady" class="auto-grid">
   <div class="asset-container">
     <div class="half-width" [class.flex]="nonRuneAssets.length == 1">
       <div *ngFor="let asset of nonRuneAssets" class="asset" style="background-color: {{ getAssetColor(asset.name) }}">
@@ -20,24 +20,30 @@
   </div>
 </div>
 
+<mat-spinner *ngIf="!openPositionsReady"></mat-spinner>
+
 <h1 class="m-top">All-Time Statistics</h1>
 
 <div class="auto-grid">
   <div class="statbox">
     <h3>Total Deposited</h3>
-    {{ totalDeposited }} USD
+    <p *ngIf="actionsReady">{{ totalDeposited }} USD</p>
+    <mat-spinner [diameter]="30" *ngIf="!actionsReady"></mat-spinner>
   </div>
   <div class="statbox">
     <h3>Total Withdrawn</h3>
-    {{ totalWithdrawn }} USD
+    <p *ngIf="actionsReady">{{ totalWithdrawn }} USD</p>
+    <mat-spinner [diameter]="30" *ngIf="!actionsReady"></mat-spinner>
   </div>
   <div class="statbox">
     <h3>Current Value</h3>
-    {{ totalCurrent }} USD
+    <p *ngIf="openPositionsReady">{{ totalCurrent }} USD</p>
+    <mat-spinner [diameter]="30" *ngIf="!openPositionsReady"></mat-spinner>
   </div>
   <div class="statbox">
     <h3>Total Gain / Loss</h3>
-    {{ totalGainLoss }} USD
+    <p *ngIf="actionsReady && openPositionsReady">{{ totalGainLoss }} USD</p>
+    <mat-spinner [diameter]="30" *ngIf="!actionsReady || !openPositionsReady"></mat-spinner>
   </div>
 </div>
 

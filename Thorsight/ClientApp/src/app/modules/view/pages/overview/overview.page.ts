@@ -14,8 +14,16 @@ export class OverviewPage {
   constructor(private viewCache: ViewCacheService) {
   }
 
+  get actionsReady() {
+    return this.viewCache.actions != null;
+  }
+
   get actions(): LiquidityAction[] {
     return this.viewCache.actions ?? [];
+  }
+
+  get openPositionsReady() {
+    return this.viewCache.openPositions != null;
   }
 
   get openPositions(): OpenPosition[] {

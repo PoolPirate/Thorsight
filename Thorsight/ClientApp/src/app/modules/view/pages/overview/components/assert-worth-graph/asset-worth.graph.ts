@@ -53,9 +53,13 @@ export class AssetWorthGraph extends BaseComponent implements OnInit {
   }
 
   initialize() {
+    if (this.isLoading) {
+      return;
+    }
+
     this.initialized = true;
 
-    this.pools = this.viewCache.positionHistories.map(x => x.poolName).filter(this.onlyUnique).reverse();
+    this.pools = this.viewCache.positionHistories!.map(x => x.poolName).filter(this.onlyUnique).reverse();
     this.timestamps = this.viewCache.positionHistories!.map(x => x.timestamp).filter(this.onlyUnique);
 
     this.poolValues = this.pools.map(pool => {

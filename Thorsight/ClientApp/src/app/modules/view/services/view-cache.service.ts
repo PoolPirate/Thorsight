@@ -53,27 +53,27 @@ export class ViewCacheService {
   private contentUpdatedSubject: Subject<void> = new Subject();
   onContentUpdated: Observable<void> = this.contentUpdatedSubject.asObservable();
 
-  get actions(): LiquidityAction[] {
-    if (this.selected == "all") {
-      return this.allActions ?? [];
+  get actions(): LiquidityAction[] | null {
+    if (this.selected == "all" || this.allActions == null) {
+      return this.allActions;
     }
 
-    return (this.allActions ?? []).filter(x => x.poolName == this.selected);
+    return this.allActions.filter(x => x.poolName == this.selected);
   }
 
-  get openPositions(): OpenPosition[] {
-    if (this.selected == "all") {
-      return this.allOpenPositions ?? [];
+  get openPositions(): OpenPosition[] | null {
+    if (this.selected == "all" || this.allOpenPositions == null) {
+      return this.allOpenPositions;
     }
-
-    return (this.allOpenPositions ?? []).filter(x => x.poolName == this.selected);
+    
+    return this.allOpenPositions.filter(x => x.poolName == this.selected);
   }
 
-  get positionHistories(): OpenPosition[] {
-    if (this.selected == "all") {
-      return this.allPositionHistories ?? [];
+  get positionHistories(): OpenPosition[] | null {
+    if (this.selected == "all" || this.allPositionHistories == null) {
+      return this.allPositionHistories;
     }
 
-    return (this.allPositionHistories ?? []).filter(x => x.poolName == this.selected);
+    return this.allPositionHistories.filter(x => x.poolName == this.selected);
   }
 }
