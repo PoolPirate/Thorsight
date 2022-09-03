@@ -99,7 +99,11 @@ export class LuviGraph extends BaseComponent implements OnInit {
       ],
       yAxis: [
         {
-          type: 'value'
+          type: 'log',
+          logBase: 1.01,
+          axisLabel: {
+            formatter: (x: number) => x.toFixed(3)
+          }
         }
       ],
       series: this.poolValues
