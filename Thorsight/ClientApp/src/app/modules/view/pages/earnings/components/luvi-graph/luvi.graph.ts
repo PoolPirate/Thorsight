@@ -27,7 +27,7 @@ export class LuviGraph extends BaseComponent implements OnInit {
     super();
     this.viewCache.onSelectChange
       .pipe(takeUntil(this.ngUnsubscribe)).subscribe(() => {
-        this.initialize();
+        this.generateCharts();
       });
     this.viewCache.onContentUpdated
       .pipe(takeUntil(this.ngUnsubscribe)).subscribe(() => {
@@ -56,7 +56,10 @@ export class LuviGraph extends BaseComponent implements OnInit {
     }
 
     this.initialized = true;
+    this.generateCharts();
+  }
 
+  generateCharts() {
     this.pools = this.viewCache.positionHistories!.map(x => x.poolName).filter(this.onlyUnique).reverse();
     this.timestamps = this.viewCache.positionHistories!.map(x => x.timestamp).filter(this.onlyUnique);
 

@@ -28,7 +28,7 @@ export class AssetAmountGraph extends BaseComponent implements OnInit {
     super();
     this.viewCache.onSelectChange
       .pipe(takeUntil(this.ngUnsubscribe)).subscribe(() => {
-        this.initialize();
+        this.generateChart();
       });
 
     this.viewCache.onContentUpdated
@@ -38,9 +38,7 @@ export class AssetAmountGraph extends BaseComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if (!this.isLoading && !this.initialized) {
       this.initialize();
-    }
   }
 
   get isLoading() {
@@ -58,7 +56,10 @@ export class AssetAmountGraph extends BaseComponent implements OnInit {
     }
 
     this.initialized = true;
+    this.generateChart();
+  }
 
+  generateChart() {
     this.pools = this.viewCache.positionHistories!.map(x => x.poolName).filter(this.onlyUnique).reverse();
     this.timestamps = this.viewCache.positionHistories!.map(x => x.timestamp).filter(this.onlyUnique);
 
