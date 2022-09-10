@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ViewChild, ViewChildren } from "@angular/core";
+import { AfterViewInit, ChangeDetectorRef, Component, ViewChild, ViewChildren } from "@angular/core";
 import { ViewCacheService } from "../../../../services/view-cache.service";
 import { EChartsOption, SeriesOption, ECharts } from 'echarts';
 import { NgxEchartsDirective } from 'ngx-echarts';
@@ -12,7 +12,7 @@ import { OnInit } from "@angular/core";
   templateUrl: './asset-worth.graph.html',
   styleUrls: ['./asset-worth.graph.scss'],
 })
-export class AssetWorthGraph extends BaseComponent implements OnInit {
+export class AssetWorthGraph extends BaseComponent implements AfterViewInit {
   pools: string[] = [];
   timestamps: string[] = [];
   poolValues: SeriesOption[] = [];
@@ -23,7 +23,7 @@ export class AssetWorthGraph extends BaseComponent implements OnInit {
   @ViewChild(NgxEchartsDirective)
   element: NgxEchartsDirective = null!;
 
-  constructor(private viewCache: ViewCacheService) {
+  constructor(private viewCache: ViewCacheService, private changeDetector: ChangeDetectorRef) {
     super();
     this.viewCache.onSelectChange
       .pipe(takeUntil(this.ngUnsubscribe)).subscribe(() => {
@@ -35,8 +35,9 @@ export class AssetWorthGraph extends BaseComponent implements OnInit {
       });
   }
 
-  ngOnInit(): void {
-      this.initialize();
+  ngAfterViewInit(): void {
+    this.initialize();
+    this.changeDetector.detectChanges();
   }
 
   get isLoading() {
@@ -48,6 +49,9 @@ export class AssetWorthGraph extends BaseComponent implements OnInit {
   }
 
   initialize() {
+    if (this.element == null) {
+      return;
+    }
     if (this.isLoading || this.initialized) {
       this.initialized = !this.isLoading;
       return;

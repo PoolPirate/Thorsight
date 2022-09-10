@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ViewChild, ViewChildren } from "@angular/core";
+import { AfterViewInit, ChangeDetectorRef, Component, ViewChild, ViewChildren } from "@angular/core";
 import { ViewCacheService } from "../../../../services/view-cache.service";
 import { EChartsOption, SeriesOption, ECharts } from 'echarts';
 import { NgxEchartsDirective } from 'ngx-echarts';
@@ -12,7 +12,7 @@ import { OnInit } from "@angular/core";
   templateUrl: './luvi.graph.html',
   styleUrls: ['./luvi.graph.scss'],
 })
-export class LuviGraph extends BaseComponent implements OnInit {
+export class LuviGraph extends BaseComponent implements AfterViewInit {
   pools: string[] = [];
   timestamps: string[] = [];
   poolValues: SeriesOption[] = [];
@@ -23,7 +23,7 @@ export class LuviGraph extends BaseComponent implements OnInit {
   @ViewChild(NgxEchartsDirective)
   element: NgxEchartsDirective = null!;
 
-  constructor(private viewCache: ViewCacheService) {
+  constructor(private viewCache: ViewCacheService, private changeDetector: ChangeDetectorRef) {
     super();
     this.viewCache.onSelectChange
       .pipe(takeUntil(this.ngUnsubscribe)).subscribe(() => {
@@ -35,10 +35,9 @@ export class LuviGraph extends BaseComponent implements OnInit {
       });
   }
 
-  ngOnInit(): void {
-    if (!this.isLoading && !this.initialized) {
-      this.initialize();
-    }
+  ngAfterViewInit(): void {
+    this.initialize();
+    this.changeDetector.detectChanges();
   }
 
   get isLoading() {
@@ -50,6 +49,10 @@ export class LuviGraph extends BaseComponent implements OnInit {
   }
 
   initialize() {
+    if (this.element == null) {
+      console.log(this);
+      return;
+    }
     if (this.isLoading || this.initialized) {
       this.initialized = !this.isLoading;
       return;
