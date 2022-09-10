@@ -32,12 +32,13 @@ mat-drawer-content {
 
 .position-selector-container {
   display: flex;
-  justify-content: center;
+  justify-content: right;
   width: 100%;
+  place-content: right;
 }
 
 mat-form-field {
-  width: 75%;
+  width: calc(100% - 88px);
 }
 
 .heading {
