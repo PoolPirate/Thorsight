@@ -61,11 +61,12 @@ public class FlipsideClient : Singleton
 
         if (!response.IsSuccessStatusCode)
         {
-            string errorMessage = await response.Content.ReadAsStringAsync();
+            string errorMessage = await response.Content.ReadAsStringAsync(cancellationToken);
             throw new Exception($"Flipside responded with {response.StatusCode}: {errorMessage}");
         }
 
-        return (await response.Content.ReadFromJsonAsync<QueueQueryResult>()) ?? throw new InvalidOperationException("Failed parsing result from flipside!");
+        return (await response.Content.ReadFromJsonAsync<QueueQueryResult>(cancellationToken: cancellationToken)) 
+            ?? throw new InvalidOperationException("Failed parsing result from flipside!");
     }
 
     private async Task<object[][]?> GetQueryResultsAsync(string token, int pageNumber = 1, int pageSize = 100000,
