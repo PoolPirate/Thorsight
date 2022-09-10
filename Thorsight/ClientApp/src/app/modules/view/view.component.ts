@@ -17,6 +17,7 @@ import { ViewCacheService } from './services/view-cache.service';
 })
 export class ViewComponent extends BaseComponent {
   positionSelector = new FormControl("all");
+  daysSelector = new FormControl(30);
 
   constructor(private route: ActivatedRoute, private viewCache: ViewCacheService, private queryService: QueryService) {
     super();
@@ -27,9 +28,18 @@ export class ViewComponent extends BaseComponent {
     this.loadOpenPositions(address);
     this.loadLiquidityPositionHistories(address);
 
-    this.positionSelector.valueChanges.subscribe(() => {
+    this.positionSelector.valueChanges
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(() => {
       this.viewCache.selected = this.positionSelector.value;
     });
+    this.daysSelector.valueChanges
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(() => {
+        this.viewCache.dayCount = this.daysSelector.value;
+        this.viewCache.allPositionHistories = null;
+        this.loadLiquidityPositionHistories(address);
+    })
   }
 
   get allOpenPositions(): OpenPosition[] {
@@ -61,7 +71,7 @@ export class ViewComponent extends BaseComponent {
   }
 
   loadLiquidityPositionHistories(address: string) {
-    this.queryService.getLiquidtyPositionHistory(address)
+    this.queryService.getLiquidtyPositionHistory(address, this.viewCache.dayCount)
       .pipe(
         takeUntil(this.ngUnsubscribe)
       )

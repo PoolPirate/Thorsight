@@ -29,13 +29,11 @@ export class AssetAmountGraph extends BaseComponent implements OnInit {
     this.viewCache.onSelectChange
       .pipe(takeUntil(this.ngUnsubscribe)).subscribe(() => {
         this.initialize();
-        this.element.refreshChart();
-      })
+      });
+
     this.viewCache.onContentUpdated
       .pipe(takeUntil(this.ngUnsubscribe)).subscribe(() => {
-        if (!this.isLoading && !this.initialized) {
-          this.initialize();
-        }
+        this.initialize();
       });
   }
 
@@ -54,7 +52,8 @@ export class AssetAmountGraph extends BaseComponent implements OnInit {
   }
 
   initialize() {
-    if (this.isLoading) {
+    if (this.isLoading || this.initialized) {
+      this.initialized = !this.isLoading;
       return;
     }
 
@@ -86,7 +85,7 @@ export class AssetAmountGraph extends BaseComponent implements OnInit {
     const runeSeries: SeriesOption = {
       name: "THOR.RUNE",
       type: 'line',
-      data: this.runeValues.map(x => x ),
+      data: this.runeValues.map(x => x == 0 ? '' : x),
       color: ColorUtils.getAssetColor("THOR.RUNE")
     };
 
@@ -119,8 +118,7 @@ export class AssetAmountGraph extends BaseComponent implements OnInit {
       yAxis: [
         {
           type: 'log',
-          logBase: 10,
-          
+          logBase: 10
         }
       ],
       series: this.poolValues

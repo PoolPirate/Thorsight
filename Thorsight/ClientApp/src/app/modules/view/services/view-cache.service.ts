@@ -8,7 +8,7 @@ export class ViewCacheService {
   private _allOpenPositions: OpenPosition[] | null = null;
   private _allPositionHistories: PositionSnapshot[] | null = null;
   private _selected: string | "all" = "all";
-  private _poolStats: PoolStatistics[] | null = null;
+  private _dayCount: number = 30;
 
   get allActions() {
     return this._allActions;
@@ -18,6 +18,9 @@ export class ViewCacheService {
   }
   get allPositionHistories() {
     return this._allPositionHistories;
+  }
+  get dayCount() {
+    return this._dayCount;
   }
   //get poolStats() {
   //  return this._poolStats;
@@ -34,9 +37,9 @@ export class ViewCacheService {
     this._allPositionHistories = value;
     this.contentUpdatedSubject.next();
   }
-  set poolStats(value: PoolStatistics[] | null) {
-    this._poolStats = value;
-    this.contentUpdatedSubject.next();
+  set dayCount(value: number) {
+    this._dayCount = value;
+    this.dayCountUpdatedSubject.next();
   }
 
   get selected(): string | "all" {
@@ -52,6 +55,9 @@ export class ViewCacheService {
 
   private contentUpdatedSubject: Subject<void> = new Subject();
   onContentUpdated: Observable<void> = this.contentUpdatedSubject.asObservable();
+
+  private dayCountUpdatedSubject: Subject<void> = new Subject();
+  onDayCountUpdated: Observable<void> = this.dayCountUpdatedSubject.asObservable();
 
   get actions(): LiquidityAction[] | null {
     if (this.selected == "all" || this.allActions == null) {

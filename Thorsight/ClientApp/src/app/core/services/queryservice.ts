@@ -26,10 +26,12 @@ export class QueryService {
       );
   }
 
-  public getLiquidtyPositionHistory(address: string): Observable<PositionSnapshot[]> {
-    return this.httpClient.get<PositionSnapshot[]>(this.apiUrl + "PositionHistory/" + address)
+  public getLiquidtyPositionHistory(address: string, days: number): Observable<PositionSnapshot[]> {
+    return this.httpClient.get<PositionSnapshot[]>(this.apiUrl + "PositionHistory/" + address, {
+      params: { 'days': days }
+    })
       .pipe(
-        timeout(60000),
+        timeout(120000),
       );
   }
 }

@@ -28,13 +28,10 @@ export class LuviGraph extends BaseComponent implements OnInit {
     this.viewCache.onSelectChange
       .pipe(takeUntil(this.ngUnsubscribe)).subscribe(() => {
         this.initialize();
-        this.element.refreshChart();
-      })
+      });
     this.viewCache.onContentUpdated
       .pipe(takeUntil(this.ngUnsubscribe)).subscribe(() => {
-        if (!this.isLoading && !this.initialized) {
-          this.initialize();
-        }
+        this.initialize();
       });
   }
 
@@ -53,7 +50,8 @@ export class LuviGraph extends BaseComponent implements OnInit {
   }
 
   initialize() {
-    if (this.isLoading) {
+    if (this.isLoading || this.initialized) {
+      this.initialized = !this.isLoading;
       return;
     }
 
@@ -108,5 +106,7 @@ export class LuviGraph extends BaseComponent implements OnInit {
       ],
       series: this.poolValues
     };
+
+    this.element.refreshChart();
   }
 }

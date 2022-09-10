@@ -21,6 +21,22 @@
           </mat-select>
         </mat-form-field>
       </div>
+      <div class="position-selector-container">
+        <mat-form-field class="red" appearance="fill">
+          <mat-label>Timeframe</mat-label>
+          <mat-select [formControl]="daysSelector">
+            <mat-option [value]="7">
+              7 Days
+            </mat-option>
+            <mat-option [value]="30">
+              30 Days
+            </mat-option>
+            <mat-option [value]="90">
+              90 Days
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
     </div>
 
       <div class="container">
