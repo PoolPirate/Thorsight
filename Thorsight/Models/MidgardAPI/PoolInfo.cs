@@ -3,7 +3,7 @@
 public class PoolInfo
 {
     public string Asset { get; set; } = null!;
-    
+
     public ulong AssetDepth { get; set; }
     public ulong RuneDepth { get; set; }
 

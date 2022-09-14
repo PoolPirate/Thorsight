@@ -14,7 +14,7 @@ public class FlipsideClient : Singleton
     private readonly ApiKeyOptions ApiKeyOptions;
 
     public async Task<T[]> RunQueryAsync<T>(string sql, int ttlMinutes = 10, bool allowCache = true,
-        CancellationToken cancellationToken = default) 
+        CancellationToken cancellationToken = default)
         where T : FlipsideObject
     {
         var queueResult = await QueueQueryAsync(sql, ttlMinutes, allowCache, cancellationToken);
@@ -65,7 +65,7 @@ public class FlipsideClient : Singleton
             throw new Exception($"Flipside responded with {response.StatusCode}: {errorMessage}");
         }
 
-        return (await response.Content.ReadFromJsonAsync<QueueQueryResult>(cancellationToken: cancellationToken)) 
+        return (await response.Content.ReadFromJsonAsync<QueueQueryResult>(cancellationToken: cancellationToken))
             ?? throw new InvalidOperationException("Failed parsing result from flipside!");
     }
 
@@ -86,8 +86,8 @@ public class FlipsideClient : Singleton
 
         var result = await response.Content.ReadFromJsonAsync<QueryResultsResult>(cancellationToken: cancellationToken);
 
-        return result?.Status != "finished" 
-            ? null 
+        return result?.Status != "finished"
+            ? null
             : (result?.Results);
     }
 }

@@ -12,7 +12,7 @@ public class OpenPositionDto
     public decimal AssetAmount { get; private set; }
     public decimal RuneAmount { get; private set; }
 
-    public OpenPositionDto(DateTimeOffset timestamp, string poolName, ulong currentStakeUnits, ulong totalStakeUnits, decimal valueUSD, 
+    public OpenPositionDto(DateTimeOffset timestamp, string poolName, ulong currentStakeUnits, ulong totalStakeUnits, decimal valueUSD,
         decimal assetAmount, decimal runeAmount)
     {
         Timestamp = timestamp;

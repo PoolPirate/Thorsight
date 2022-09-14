@@ -11,7 +11,7 @@ public class PoolStatistics : FlipsideObject
 
     public decimal AssetPrice { get; private set; }
     public decimal AssetPriceUSD { get; private set; }
-    
+
     public override void SetValues(string[] rawValues)
     {
         Timestamp = DateTimeOffset.Parse(rawValues[0]);

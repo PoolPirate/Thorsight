@@ -25,7 +25,7 @@ public class MidgardClient : Singleton
         }
     }
 
-    public async Task<PoolDepthPriceSnapshot[]?> GetPoolDepthPriceHistory(string asset, int days, 
+    public async Task<PoolDepthPriceSnapshot[]?> GetPoolDepthPriceHistory(string asset, int days,
         CancellationToken cancellationToken)
     {
         try

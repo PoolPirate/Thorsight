@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using Thorsight.Models.Dtos;
-using Thorsight.Models.QueryObjects;
 using Thorsight.Services;
 
 namespace Thorsight.Controllers;
@@ -18,7 +17,7 @@ public class QueryController : ControllerBase
 
     [HttpGet("LiquidityActions/{address}")]
     [ResponseCache(Duration = 120, Location = ResponseCacheLocation.Any)]
-    public async Task<IEnumerable<LiquidityActionDto>> GetLiquidityActionsAsync([FromRoute] string address, 
+    public async Task<IEnumerable<LiquidityActionDto>> GetLiquidityActionsAsync([FromRoute] string address,
         CancellationToken cancellationToken)
         => (await QueryClient.GetLiquidityActionsAsync(address, cancellationToken))
             .OrderBy(x => x.BlockTimestamp)
@@ -26,7 +25,7 @@ public class QueryController : ControllerBase
 
     [HttpGet("LiquidityPositions/{address}")]
     [ResponseCache(Duration = 120, Location = ResponseCacheLocation.Any)]
-    public async Task<IEnumerable<OpenPositionDto>> GetOpenPositionsAsync([FromRoute]  string address, 
+    public async Task<IEnumerable<OpenPositionDto>> GetOpenPositionsAsync([FromRoute] string address,
         CancellationToken cancellationToken)
         => (await QueryClient.GetCurrentPositionsAsync(address, cancellationToken))
             .OrderBy(x => x.PoolName);

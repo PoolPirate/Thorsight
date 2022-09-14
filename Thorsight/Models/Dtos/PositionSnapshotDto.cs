@@ -34,7 +34,7 @@ public class PositionSnapshotDto
         DepositAssetValue = depositAssetValue;
     }
 
-    private PositionSnapshotDto(string poolName, long currentStakeUnits, decimal breakEvenPrice, decimal depositRuneAmount, decimal depositAssetAmount) 
+    private PositionSnapshotDto(string poolName, long currentStakeUnits, decimal breakEvenPrice, decimal depositRuneAmount, decimal depositAssetAmount)
     {
         PoolName = poolName;
         CurrentStakeUnits = currentStakeUnits;

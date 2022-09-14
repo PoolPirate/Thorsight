@@ -3,7 +3,7 @@
 public class PoolStatisticsDto
 {
     public DateTimeOffset Timestamp { get; }
-    public string PoolName { get; } 
+    public string PoolName { get; }
 
     public decimal RuneDepth { get; }
     public decimal AssetDepth { get; }
@@ -12,7 +12,7 @@ public class PoolStatisticsDto
     public decimal AssetPrice { get; }
     public decimal AssetPriceUSD { get; }
 
-    public PoolStatisticsDto(DateTimeOffset timestamp, string poolName, decimal runeDepth, decimal assetDepth, ulong units, 
+    public PoolStatisticsDto(DateTimeOffset timestamp, string poolName, decimal runeDepth, decimal assetDepth, ulong units,
         decimal assetPrice, decimal assetPriceUSD)
     {
         Timestamp = timestamp;

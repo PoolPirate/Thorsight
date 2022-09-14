@@ -1,8 +1,5 @@
 ﻿using Common.Services;
-using System.Runtime.CompilerServices;
-using System.Text.Json;
 using Thorsight.Models.Dtos;
-using Thorsight.Models.MidgardAPI;
 using Thorsight.Models.QueryObjects;
 
 namespace Thorsight.Services;
@@ -155,7 +152,7 @@ public class QueryClient : Singleton
                 decimal valueUSD = 2 * assetAmount * currentPoolStats.AssetPriceUSD;
 
                 var positionAtEnd = new PositionSnapshotDto(
-                    day, poolName, currentPoolStats.AssetPrice, currentStakeUnits, 
+                    day, poolName, currentPoolStats.AssetPrice, currentStakeUnits,
                     currentPoolStats.Units, valueUSD, breakEvenValue, assetAmount, runeAmount,
                     depositRuneValue, depositAssetValue);
 
