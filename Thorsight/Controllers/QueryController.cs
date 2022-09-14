@@ -33,7 +33,7 @@ public class QueryController : ControllerBase
 
     [HttpGet("PositionHistory/{address}")]
     [ResponseCache(Duration = 120, Location = ResponseCacheLocation.Any)]
-    public async Task<IEnumerable<PositionSnapshotDto>> GetPositionHistoryAsync([FromRoute] string address, [FromQuery][Range(7, 180)] uint days,
+    public async Task<IEnumerable<PositionSnapshotDto>> GetPositionHistoryAsync([FromRoute] string address, [FromQuery][Range(7, 180)] int days,
         CancellationToken cancellationToken)
         => (await QueryClient.GetPositionHistoryAsync(address, days, cancellationToken))
             .OrderBy(x => x.Timestamp)

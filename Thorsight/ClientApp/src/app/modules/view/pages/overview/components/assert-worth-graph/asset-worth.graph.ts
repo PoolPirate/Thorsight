@@ -70,8 +70,8 @@ export class AssetWorthGraph extends BaseComponent implements AfterViewInit {
     this.poolValues = this.pools.map(pool => {
       const values = this.viewCache.positionHistories!.filter(stat => stat.poolName == pool).map((position, i, _) => {
         breakEvenPrices[i] = breakEvenPrices[i] > 0
-          ? breakEvenPrices[i] + position.breakEvenPrice * position.currentStakeUnits
-          : position.breakEvenPrice * position.currentStakeUnits;
+          ? breakEvenPrices[i] + position.breakEvenValue
+          : position.breakEvenValue;
 
         return position.valueUSD;
       });

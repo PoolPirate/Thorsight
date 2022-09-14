@@ -23,7 +23,7 @@ export class PositionSnapshot {
   assetPrice!: number;
   currentStakeUnits!: number;
   totalStakeUnits!: number;
-  breakEvenPrice!: number;
+  breakEvenValue!: number;
   valueUSD!: number;
   assetAmount!: number;
   runeAmount!: number;

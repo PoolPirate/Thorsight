@@ -25,11 +25,13 @@ public class MidgardClient : Singleton
         }
     }
 
-    public async Task<PoolDepthPriceSnapshot[]?> GetPoolDepthPriceHistory(string asset, uint days)
+    public async Task<PoolDepthPriceSnapshot[]?> GetPoolDepthPriceHistory(string asset, int days, 
+        CancellationToken cancellationToken)
     {
         try
         {
-            var response = await Client.GetFromJsonAsync<PoolDepthPriceHistoryResponse>($"https://midgard.thorchain.info/v2/history/depths/{asset}?interval=day&count={days + 1}");
+            var response = await Client.GetFromJsonAsync<PoolDepthPriceHistoryResponse>(
+                $"https://midgard.thorchain.info/v2/history/depths/{asset}?interval=day&count={days + 1}", cancellationToken);
             return response?.Intervals;
         }
         catch

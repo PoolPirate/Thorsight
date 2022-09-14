@@ -62,71 +62,107 @@ public class QueryClient : Singleton
         return positionDtos.ToArray();
     }
 
-    public async Task<PositionSnapshotDto[]> GetPositionHistoryAsync(string address, uint days, CancellationToken cancellationToken)
+    public async Task<PositionSnapshotDto[]> GetPositionHistoryAsync(string address, int days, CancellationToken cancellationToken)
     {
         string sql =
-            "WITH lp_actions AS ( " +
-            "SELECT a.block_timestamp, lp_action, a.pool_name, (a.rune_amount_usd + a.asset_amount_usd) / stake_units AS price_per_unit, stake_units AS units, " +
-            "(a.asset_amount / 2) * (b.rune_amount / b.asset_amount) + (a.rune_amount / 2) AS deposit_rune_value, " +
-            "(a.rune_amount / 2) * (b.asset_amount / b.rune_amount) + (a.asset_amount / 2) AS deposit_asset_value " +
-            "FROM flipside_prod_db.thorchain.liquidity_actions a " +
-            "JOIN flipside_prod_db.thorchain.pool_block_balances b ON a.block_id = b.block_id AND a.pool_name = b.pool_name " +
-           $"WHERE from_address = '{address}' ), " +
-            "pools AS ( " +
-            "SELECT DISTINCT pool_name " +
-            "FROM lp_actions )," +
-            "days AS ( " +
-            "SELECT date_day AS day " +
-            "FROM crosschain.core.dim_dates " +
-           $"WHERE date_day > CURRENT_DATE - {days + 1} AND date_day < CURRENT_DATE ) " +
-            "SELECT day, p.pool_name, " +
-            "COALESCE((SELECT sum(CASE WHEN LP_ACTION = 'add_liquidity' THEN units ELSE -units END) FROM lp_actions a WHERE block_timestamp <= day AND a.pool_name = p.pool_name), 0) AS current_stake_units, " +
-            "CASE WHEN current_stake_units = 0 THEN 0 ELSE COALESCE((SELECT sum(CASE WHEN LP_ACTION = 'add_liquidity' THEN units * price_per_unit ELSE -units * price_per_unit END) FROM lp_actions a WHERE block_timestamp <= day AND a.pool_name = p.pool_name), 0) / current_stake_units END AS break_even_price_per_unit, " +
-            "COALESCE((SELECT sum(CASE WHEN LP_ACTION = 'add_liquidity' THEN deposit_rune_value ELSE -deposit_rune_value END) FROM lp_actions a WHERE block_timestamp <= day AND a.pool_name = p.pool_name), 0) AS deposit_rune_value, " +
-            "COALESCE((SELECT sum(CASE WHEN LP_ACTION = 'add_liquidity' THEN deposit_asset_value ELSE -deposit_asset_value END) FROM lp_actions a WHERE block_timestamp <= day AND a.pool_name = p.pool_name), 0) AS deposit_asset_value " +
-            "FROM days JOIN pools p " +
-            "GROUP BY day, p.pool_name";
+         "SELECT a.block_timestamp, lp_action, a.pool_name, (a.rune_amount_usd + a.asset_amount_usd) / a.stake_units AS price_per_unit, a.stake_units AS units, " +
+         "(a.asset_amount / 2) * (b.rune_amount / b.asset_amount) + (a.rune_amount / 2) AS deposit_rune_value, " +
+         "(a.rune_amount / 2) * (b.asset_amount / b.rune_amount) + (a.asset_amount / 2) AS deposit_asset_value, " +
+         "COALESCE(u.basis_points, 0) AS withdraw_basis_points " +
+         "FROM flipside_prod_db.thorchain.liquidity_actions a " +
+         "JOIN flipside_prod_db.thorchain.pool_block_balances b ON a.block_id = b.block_id AND a.pool_name = b.pool_name " +
+         "LEFT JOIN flipside_prod_db.thorchain.unstake_events u ON a.block_id = u.block_id AND a.tx_id = u.tx_id AND a.pool_name = u.pool_name AND a.to_address = u.to_address AND a.from_address = u.from_address AND a.stake_units = u.stake_units " +
+        $"WHERE a.from_address = '{address}'";
 
-        var positionHistory = await Flipside.RunQueryAsync<PositionSnapshot>(sql, cancellationToken: cancellationToken);
+        var now = DateTimeOffset.UtcNow;
+        var currentDay = now.Subtract(now.TimeOfDay);
+        var timeframe = Enumerable.Range(0, days)
+            .Select(x => x - days)
+            .Select(x => currentDay.AddDays(x))
+            .ToArray();
 
-        var pools = new Dictionary<string, PoolInfo?>();
-        var positionDtos = new List<PositionSnapshotDto>();
+        var liquidityActions = (await Flipside.RunQueryAsync<LiquidityUpdate>(sql, cancellationToken: cancellationToken))
+            .OrderBy(x => x.BlockTimestamp)
+            .ToArray(); ;
 
+        var poolNames = liquidityActions.Select(x => x.PoolName).Distinct();
 
-        foreach(var poolTypeGrouping in positionHistory.GroupBy(x => x.PoolName))
+        var positionSnapshots = new List<PositionSnapshotDto>();
+
+        foreach (string poolName in poolNames)
         {
-            string poolName = poolTypeGrouping.Key;  
-            var poolHistory = await Midgard.GetPoolDepthPriceHistory(poolName, days);
+            var poolHistory = await Midgard.GetPoolDepthPriceHistory(poolName, days, cancellationToken);
 
             if (poolHistory is null)
             {
                 continue;
             }
 
-            foreach(var position in poolTypeGrouping)
-            {
-                var poolBalance = poolHistory.FirstOrDefault(x => x.StartTime.DateTime == position.Timestamp.DateTime);
+            var previousLpActions = liquidityActions
+                .Where(x => x.PoolName == poolName && x.BlockTimestamp.Date < timeframe[0].Date)
+                .ToArray();
 
-                if (poolBalance is null)
+            var initialPosition = PositionSnapshotDto.Initial(poolName,
+                    previousLpActions.Sum(x => x.Action == "add_liquidity" ? x.Units : -x.Units),
+                    previousLpActions.Sum(x => x.Action == "add_liquidity" ? x.Units * x.PricePerUnit : -x.Units * x.PricePerUnit),
+                    previousLpActions.Aggregate<LiquidityUpdate, decimal>(0, (current, update) => update.Action == "add_liquidity" ? current + update.DepositRuneValue : current - (current * update.WithdrawBasisPoints / 10000)),
+                    previousLpActions.Aggregate<LiquidityUpdate, decimal>(0, (current, update) => update.Action == "add_liquidity" ? current + update.DepositAssetValue : current - (current * update.WithdrawBasisPoints / 10000))
+            );
+
+            foreach (var day in timeframe)
+            {
+                var currentPoolStats = poolHistory.Where(x => x.StartTime.DateTime == day.DateTime).SingleOrDefault();
+
+                if (currentPoolStats is null)
                 {
-                    Logger.LogWarning("Missing pool history value!");
+                    Logger.LogWarning("Missing pool history value: {day} - {poolName}", day.Date.ToShortDateString(), poolName);
                     continue;
                 }
 
-                decimal poolShare = (decimal)position.CurrentStakeUnits / poolBalance.Units;
+                var positionAtStart = positionSnapshots.LastOrDefault(x => x.PoolName == poolName, initialPosition);
 
-                decimal runeAmount = poolBalance.RuneDepth * poolShare / 100000000;
-                decimal assetAmount = runeAmount / poolBalance.AssetPrice;
+                long currentStakeUnits = positionAtStart.CurrentStakeUnits;
+                decimal breakEvenValue = positionAtStart.BreakEvenValue;
+                decimal depositRuneValue = positionAtStart.DepositRuneValue;
+                decimal depositAssetValue = positionAtStart.DepositAssetValue;
 
-                decimal valueUSD = 2 * assetAmount * poolBalance.AssetPriceUSD;
+                var lpActions = liquidityActions
+                    .Where(x => x.PoolName == poolName && x.BlockTimestamp.Date == day.Date);
 
-                var dto = new PositionSnapshotDto(position.Timestamp, position.PoolName, poolBalance.AssetPrice, position.CurrentStakeUnits, poolBalance.Units, 
-                    valueUSD, position.BreakEvenPrice, assetAmount, runeAmount, position.DepositRuneValue, position.DepositAssetValue);
 
-                positionDtos.Add(dto);
+                foreach (var lpAction in lpActions)
+                {
+                    if (lpAction.Action == "add_liquidity")
+                    {
+                        currentStakeUnits += lpAction.Units;
+                        breakEvenValue += lpAction.Units * lpAction.PricePerUnit;
+                        depositRuneValue += lpAction.DepositRuneValue;
+                        depositAssetValue += lpAction.DepositAssetValue;
+                    }
+                    if (lpAction.Action == "remove_liquidity")
+                    {
+                        currentStakeUnits -= lpAction.Units;
+                        breakEvenValue -= lpAction.Units * lpAction.PricePerUnit;
+                        depositRuneValue -= depositRuneValue * lpAction.WithdrawBasisPoints / 10000;
+                        depositAssetValue -= depositAssetValue * lpAction.WithdrawBasisPoints / 10000;
+                    }
+                }
+
+                decimal poolShare = (decimal)currentStakeUnits / currentPoolStats.Units;
+                decimal runeAmount = currentPoolStats.RuneDepth * poolShare / 100000000;
+                decimal assetAmount = runeAmount / currentPoolStats.AssetPrice;
+
+                decimal valueUSD = 2 * assetAmount * currentPoolStats.AssetPriceUSD;
+
+                var positionAtEnd = new PositionSnapshotDto(
+                    day, poolName, currentPoolStats.AssetPrice, currentStakeUnits, 
+                    currentPoolStats.Units, valueUSD, breakEvenValue, assetAmount, runeAmount,
+                    depositRuneValue, depositAssetValue);
+
+                positionSnapshots.Add(positionAtEnd);
             }
         }
 
-        return positionDtos.ToArray();
+        return positionSnapshots.ToArray();
     }
 }
