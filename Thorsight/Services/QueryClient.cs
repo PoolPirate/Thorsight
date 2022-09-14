@@ -66,8 +66,11 @@ public class QueryClient : Singleton
     {
         string sql =
             "WITH lp_actions AS ( " +
-            "SELECT block_timestamp, lp_action, pool_name, (rune_amount_usd + asset_amount_usd) / stake_units AS price_per_unit, stake_units AS units " +
-            "FROM flipside_prod_db.thorchain.liquidity_actions " +
+            "SELECT a.block_timestamp, lp_action, a.pool_name, (a.rune_amount_usd + a.asset_amount_usd) / stake_units AS price_per_unit, stake_units AS units, " +
+            "(a.asset_amount / 2) * (b.rune_amount / b.asset_amount) + (a.rune_amount / 2) AS deposit_rune_value, " +
+            "(a.rune_amount / 2) * (b.asset_amount / b.rune_amount) + (a.asset_amount / 2) AS deposit_asset_value " +
+            "FROM flipside_prod_db.thorchain.liquidity_actions a " +
+            "JOIN flipside_prod_db.thorchain.pool_block_balances b ON a.block_id = b.block_id AND a.pool_name = b.pool_name " +
            $"WHERE from_address = '{address}' ), " +
             "pools AS ( " +
             "SELECT DISTINCT pool_name " +
@@ -78,8 +81,11 @@ public class QueryClient : Singleton
            $"WHERE date_day > CURRENT_DATE - {days + 1} AND date_day < CURRENT_DATE ) " +
             "SELECT day, p.pool_name, " +
             "COALESCE((SELECT sum(CASE WHEN LP_ACTION = 'add_liquidity' THEN units ELSE -units END) FROM lp_actions a WHERE block_timestamp <= day AND a.pool_name = p.pool_name), 0) AS current_stake_units, " +
-            "CASE WHEN current_stake_units = 0 THEN 0 ELSE COALESCE((SELECT sum(CASE WHEN LP_ACTION = 'add_liquidity' THEN units * price_per_unit ELSE -units * price_per_unit END) FROM lp_actions a WHERE block_timestamp <= day AND a.pool_name = p.pool_name), 0) / current_stake_units END AS break_even_price_per_unit " +
-            "FROM days JOIN pools p";
+            "CASE WHEN current_stake_units = 0 THEN 0 ELSE COALESCE((SELECT sum(CASE WHEN LP_ACTION = 'add_liquidity' THEN units * price_per_unit ELSE -units * price_per_unit END) FROM lp_actions a WHERE block_timestamp <= day AND a.pool_name = p.pool_name), 0) / current_stake_units END AS break_even_price_per_unit, " +
+            "COALESCE((SELECT sum(CASE WHEN LP_ACTION = 'add_liquidity' THEN deposit_rune_value ELSE -deposit_rune_value END) FROM lp_actions a WHERE block_timestamp <= day AND a.pool_name = p.pool_name), 0) AS deposit_rune_value, " +
+            "COALESCE((SELECT sum(CASE WHEN LP_ACTION = 'add_liquidity' THEN deposit_asset_value ELSE -deposit_asset_value END) FROM lp_actions a WHERE block_timestamp <= day AND a.pool_name = p.pool_name), 0) AS deposit_asset_value " +
+            "FROM days JOIN pools p " +
+            "GROUP BY day, p.pool_name";
 
         var positionHistory = await Flipside.RunQueryAsync<PositionSnapshot>(sql, cancellationToken: cancellationToken);
 
@@ -114,8 +120,9 @@ public class QueryClient : Singleton
 
                 decimal valueUSD = 2 * assetAmount * poolBalance.AssetPriceUSD;
 
-                var dto = new PositionSnapshotDto(position.Timestamp, position.PoolName, position.CurrentStakeUnits, poolBalance.Units, 
-                    valueUSD, position.BreakEvenPrice, assetAmount, runeAmount);
+                var dto = new PositionSnapshotDto(position.Timestamp, position.PoolName, poolBalance.AssetPrice, position.CurrentStakeUnits, poolBalance.Units, 
+                    valueUSD, position.BreakEvenPrice, assetAmount, runeAmount, position.DepositRuneValue, position.DepositAssetValue);
+
                 positionDtos.Add(dto);
             }
         }

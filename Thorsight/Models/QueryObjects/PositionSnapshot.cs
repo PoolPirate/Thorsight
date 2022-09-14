@@ -9,11 +9,16 @@ public class PositionSnapshot : FlipsideObject
     public ulong CurrentStakeUnits { get; private set; }
     public decimal BreakEvenPrice { get; private set; }
 
+    public decimal DepositRuneValue { get; private set; }
+    public decimal DepositAssetValue { get; private set; }
+
     public override void SetValues(string[] rawValues)
     {
         Timestamp = DateTimeOffset.Parse(rawValues[0]);
         PoolName = rawValues[1];
         CurrentStakeUnits = ulong.Parse(rawValues[2]);
         BreakEvenPrice = decimal.Parse(rawValues[3], NumberStyles.Float);
+        DepositRuneValue = decimal.Parse(rawValues[4], NumberStyles.Float);
+        DepositAssetValue = decimal.Parse(rawValues[5], NumberStyles.Float);
     }
 }

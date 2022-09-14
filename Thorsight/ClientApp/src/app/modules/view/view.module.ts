@@ -10,6 +10,7 @@ import { ViewCacheService } from "./services/view-cache.service";
 import { AssetWorthGraph } from "./pages/overview/components/assert-worth-graph/asset-worth.graph";
 import { AssetAmountGraph } from "./pages/overview/components/asset-amount-graph/asset-amount.graph";
 import { LuviGraph } from "./pages/earnings/components/luvi-graph/luvi.graph";
+import { IlpGraph } from "./pages/earnings/components/ilp-graph/ilp.graph";
 
 @NgModule({
   declarations: [
@@ -20,6 +21,7 @@ import { LuviGraph } from "./pages/earnings/components/luvi-graph/luvi.graph";
     NavComponent,
     AssetWorthGraph,
     AssetAmountGraph,
+    IlpGraph,
     LuviGraph
   ],
   imports: [
