@@ -145,9 +145,9 @@ public class QueryClient : Singleton
                     }
                 }
 
-                decimal poolShare = (decimal)currentStakeUnits / currentPoolStats.Units;
+                decimal poolShare = currentPoolStats.Units == 0 ? 0 : (decimal)currentStakeUnits / currentPoolStats.Units;
                 decimal runeAmount = currentPoolStats.RuneDepth * poolShare / 100000000;
-                decimal assetAmount = runeAmount / currentPoolStats.AssetPrice;
+                decimal assetAmount = currentPoolStats.AssetPrice == 0 ? 0 : runeAmount / currentPoolStats.AssetPrice;
 
                 decimal valueUSD = 2 * assetAmount * currentPoolStats.AssetPriceUSD;
 
