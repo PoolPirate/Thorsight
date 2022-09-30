@@ -27,7 +27,7 @@ export class SystemIncomePage extends BaseComponent {
   }
   get totalEarningsUSD() {
     var total = 0;
-    this.cache.systemStatisticsHistory?.forEach(x => total += x.blockRewards + x.liquidityFee * x.runeUSD);
+    this.cache.systemStatisticsHistory?.forEach(x => total += (x.blockRewards + x.liquidityFee) * x.runeUSD);
     return Math.round(100 * total) / 100;
   }
 
