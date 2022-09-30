@@ -33,18 +33,18 @@ export class ColorUtils {
   public static getEarningsCategoryColor(category: "blockrewards" | "liquidityfees") {
     switch (category) {
       case "blockrewards":
-        return "red";
+        return "#672A2A";
       case "liquidityfees":
-        return "green";
+        return "#2C7656";
     }
   }
 
   public static getSwapVolumeCategoryColor(category: "actual" | "offset") {
     switch (category) {
       case "actual":
-        return "blue";
+        return "#71FFF0";
       case "offset":
-        return "yellow";
+        return "#93672E";
     }
   }
 }
