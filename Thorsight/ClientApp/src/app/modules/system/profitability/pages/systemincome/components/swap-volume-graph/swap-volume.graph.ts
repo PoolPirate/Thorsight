@@ -59,7 +59,7 @@ export class SwapVolumeGraph extends BaseComponent implements AfterViewInit {
       name: "Swap Volume",
       type: "line",
       smooth: true,
-      areaStyle: {  
+      areaStyle: {
       },
       data: this.cache.systemStatisticsHistory!.map(x => x.swapVolume),
       color: ColorUtils.getSwapVolumeCategoryColor("actual")
@@ -86,6 +86,12 @@ export class SwapVolumeGraph extends BaseComponent implements AfterViewInit {
           label: {
             backgroundColor: '#6a7985',
           }
+        }
+      },
+      legend: {
+        show: true,
+        textStyle: {
+          color: "white", 
         }
       },
       grid: {

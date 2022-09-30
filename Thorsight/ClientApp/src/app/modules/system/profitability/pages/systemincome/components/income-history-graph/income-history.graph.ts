@@ -90,6 +90,12 @@ export class IncomeHistoryGraph extends BaseComponent implements AfterViewInit {
         bottom: '3%',
         containLabel: true
       },
+      legend: {
+        show: true,
+        textStyle: {
+          color: "white",
+        }
+      },
       xAxis: [
         {
           type: 'category',
