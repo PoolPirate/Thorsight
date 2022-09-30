@@ -1,0 +1,86 @@
+<div class="auto-grid">
+  <div class="statbox">
+    <div class="spaced-row">
+      <h3>System Income ({{ trackedDays }} Days)</h3>
+      <tooltip-component>
+        <h2>System Earnings?</h2>
+        <p>
+          ThorChain generated income by adding fees to various network activities.
+          This includes the slip based swap fee, the 3x outbound fee and the 0.02 RUNE tx fee.
+          Additionally there is a decreasing amount of RUNE emitted every block from the reserve.
+          These funds are distributed to nodes and liquidity providers.
+        </p>
+        <a target="_blank"
+           href="https://app.flipsidecrypto.com/velocity/queries/1c77d566-bbfd-458a-b674-2f046afba75b">
+          SQL Query
+        </a>
+      </tooltip-component>
+    </div>
+
+    <div class="statbox">
+      <p>Total Earnings</p>
+      <p>{{ totalEarnings.toLocaleString() }} RUNE ( ≈ {{ totalEarningsUSD.toLocaleString() }} USD)</p>
+    </div>
+    <earnings-breakdown-graph></earnings-breakdown-graph>
+  </div>
+  <div class="statbox grit">
+    <div>
+      <div class="spaced-row">
+        <h3>Swaps ({{ trackedDays }} Days)</h3>
+        <tooltip-component>
+          <h2>Swaps?</h2>
+          <p>
+            ThorChain allows swapping of assets across native blockchains.
+            For that they use liquidity pools, each using RUNE on one side.
+            Therefore the amount of RUNE swapped is a good metric for measuring volume.
+          </p>
+          <a target="_blank"
+             href="https://app.flipsidecrypto.com/velocity/queries/d6c70f61-b613-4111-abf1-3ca58a0a1c9f">
+            SQL Query
+          </a>
+        </tooltip-component>
+      </div>
+
+      <div class="statbox">
+        <p>Total Volume</p>
+        <p>{{ totalSwapVolume.toLocaleString() }} RUNE ( ≈ {{ totalSwapVolumeUSD.toLocaleString() }} USD)</p>
+      </div>
+
+      <div class="statbox push-down">
+        <div class="spaced-row">
+          <p>Average Swap Fee</p>
+          <tooltip-component>
+            <h2>Average Swap Fee?</h2>
+            <p>
+              A very rough estimate of the fee paid for swapping.
+              Calculated by dividing total liquidity fees by the swap volume.
+              This number fluctuates a lot on a per swap basis due to the network used and fluctuating outbound fees!
+            </p>
+          </tooltip-component>
+        </div>
+          <p>{{ averageFeePercentage.toLocaleString() }}%</p>
+        </div>
+      </div>
+    <div class="statbox">
+      <div class="spaced-row">
+        <p>Swap Volume required to offset Block Rewards</p>
+        <tooltip-component>
+          <h2>Offset Swap Volume?</h2>
+          <p>
+            This is the theoretical swap volume necessary to achieve current network income when there would be no block rewards.
+            Block rewards will decrease every block till they come to a full stop in a few years time!
+          </p>
+        </tooltip-component>
+      </div>
+      <p>{{ totalOffsetSwapVolume.toLocaleString() }} RUNE ( ≈ {{ totalOffsetSwapVolumeUSD.toLocaleString() }} USD))</p>
+
+      <h3 style="color: 'orange'">=> Swap volume increase of {{ offsetIncreasePercentage.toLocaleString() }}%</h3>
+    </div>
+  </div>
+</div>
+
+<h2>Income History</h2>
+<income-history-graph></income-history-graph>
+
+<h2>Swap Volume History</h2>
+<swap-volume-graph></swap-volume-graph>

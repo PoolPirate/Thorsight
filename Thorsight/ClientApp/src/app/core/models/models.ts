@@ -1,3 +1,17 @@
+export class SystemStatistics {
+  timestamp!: string;
+
+  liquidityFee!: number;
+  blockRewards!: number;
+
+  lpEarnings!: number;
+  bondEarnings!: number;
+
+  swapVolume!: number;
+
+  runeUSD!: number;
+}
+
 export class LiquidityAction {
   blockTimestamp!: string;
   action!: string;

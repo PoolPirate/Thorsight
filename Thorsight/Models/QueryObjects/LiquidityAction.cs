@@ -4,7 +4,7 @@ namespace Thorsight.Models.QueryObjects;
 
 public class LiquidityAction : FlipsideObject
 {
-    public DateTimeOffset BlockTimestamp { get; private set; }
+    public DateTime BlockTimestamp { get; private set; }
     public string Action { get; private set; } = null!;
     public string PoolName { get; private set; } = null!;
 
@@ -13,7 +13,7 @@ public class LiquidityAction : FlipsideObject
 
     public override void SetValues(string[] rawValues)
     {
-        BlockTimestamp = DateTimeOffset.Parse(rawValues[0]);
+        BlockTimestamp = DateTime.Parse(rawValues[0]);
         Action = rawValues[1];
         PoolName = rawValues[2];
 

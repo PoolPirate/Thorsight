@@ -1,0 +1,27 @@
+.auto-grid {
+  display: grid;
+  grid-gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  padding: 0px 20px 0px 20px;
+}
+
+.statbox {
+  border-radius: 10px;
+  border: 1px solid #3D3D3D;
+  margin: 15px 15px 0px 15px;
+  padding: 10px;
+  background-color: #2E2E2E;
+}
+
+.spaced-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 5px;
+}
+
+.grit {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}

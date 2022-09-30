@@ -15,7 +15,11 @@ export class HomePage {
     this.addressControl.setValue(localStorage.getItem("address") ?? "");
   }
 
-  analyze() {
+  gotoSystemProfitability() {
+    this.router.navigateByUrl("system/profitability");
+  }
+
+  gotoLiquidityTracker() {
     this.addressControl.markAllAsTouched();
 
     if (this.addressControl.invalid) {
@@ -25,6 +29,6 @@ export class HomePage {
     const address = this.addressControl.value.trim();
 
     localStorage.setItem("address", address);
-    this.router.navigate([address]);
+    this.router.navigate(["liquidity", address]);
   }
 }

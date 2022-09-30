@@ -11,6 +11,40 @@ public class QueryClient : Singleton
     [Inject]
     private readonly MidgardClient Midgard;
 
+    public async Task<SystemStatisticsDto[]> GetSystemIncomeAsync(int days, CancellationToken cancellationToken)
+    {
+        string sql =
+          $"""
+           WITH volume AS (
+             SELECT day, sum(swap_volume_rune)
+             FROM flipside_prod_db.thorchain.daily_pool_stats
+             WHERE day >= CURRENT_DATE - {days} AND day != CURRENT_DATE
+             GROUP BY day
+           ),
+           earnings AS (
+             SELECT day, liquidity_fee, block_rewards, bonding_earnings / earnings AS e
+             FROM flipside_prod_db.thorchain.block_rewards
+             WHERE day >= CURRENT_DATE - {days} AND day != CURRENT_DATE
+           ),
+           prices AS (
+             SELECT DATE_TRUNC('day', block_timestamp) AS day, avg(rune_usd) AS a
+             FROM flipside_prod_db.thorchain.prices
+             WHERE day >= CURRENT_DATE - {days} AND day != CURRENT_DATE
+             GROUP BY day
+           )
+
+           SELECT v.*, e.liquidity_fee, e.block_rewards, e.e, p.a
+           FROM volume v
+           JOIN earnings e ON v.day = e.day 
+           JOIN prices p ON v.day = p.day
+           """;
+
+        var incomes = await Flipside.RunQueryAsync<SystemStatistics>(sql, cancellationToken: cancellationToken);
+        return incomes
+            .Select(x => new SystemStatisticsDto(x.Timestamp, x.LiquidityFee, x.BlockRewards, x.BondShare, x.SwapVolume, x.RuneUSD))
+            .ToArray();
+    }
+
     public async Task<LiquidityActionDto[]> GetLiquidityActionsAsync(string address, CancellationToken cancellationToken)
     {
         string sql =
@@ -23,7 +57,6 @@ public class QueryClient : Singleton
             .Select(x => new LiquidityActionDto(x.BlockTimestamp, x.Action, x.PoolName, x.PricePerUnit, x.Units))
             .ToArray();
     }
-
 
     public async Task<OpenPositionDto[]> GetCurrentPositionsAsync(string address, CancellationToken cancellationToken)
     {
@@ -71,7 +104,7 @@ public class QueryClient : Singleton
          "LEFT JOIN flipside_prod_db.thorchain.unstake_events u ON a.block_id = u.block_id AND a.tx_id = u.tx_id AND a.pool_name = u.pool_name AND a.to_address = u.to_address AND a.from_address = u.from_address AND a.stake_units = u.stake_units " +
         $"WHERE a.from_address = '{address}'";
 
-        var now = DateTimeOffset.UtcNow;
+        var now = DateTime.UtcNow;
         var currentDay = now.Subtract(now.TimeOfDay);
         var timeframe = Enumerable.Range(0, days)
             .Select(x => x - days)
@@ -108,7 +141,7 @@ public class QueryClient : Singleton
 
             foreach (var day in timeframe)
             {
-                var currentPoolStats = poolHistory.Where(x => x.StartTime.DateTime == day.DateTime).SingleOrDefault();
+                var currentPoolStats = poolHistory.Where(x => x.StartTime.DateTime == day).SingleOrDefault();
 
                 if (currentPoolStats is null)
                 {
@@ -125,7 +158,6 @@ public class QueryClient : Singleton
 
                 var lpActions = liquidityActions
                     .Where(x => x.PoolName == poolName && x.BlockTimestamp.Date == day.Date);
-
 
                 foreach (var lpAction in lpActions)
                 {

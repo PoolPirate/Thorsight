@@ -11,10 +11,12 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { NgxEchartsModule } from 'ngx-echarts';
 import { FooterComponent } from "./components/footer/footer.component";
+import { TooltipComponent } from "./components/tooltip/tooltip.component";
 
 @NgModule({
   declarations: [
     FooterComponent,
+    TooltipComponent
   ],
   imports: [
     CommonModule,
@@ -54,7 +56,8 @@ import { FooterComponent } from "./components/footer/footer.component";
 
     NgxEchartsModule,
 
-    FooterComponent
+    FooterComponent,
+    TooltipComponent
   ],
   providers: [
 

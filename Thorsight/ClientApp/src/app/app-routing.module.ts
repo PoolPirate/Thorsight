@@ -1,20 +1,31 @@
 import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import { Route, RouterModule, Routes } from '@angular/router';
 import { HomePage } from './core/pages/home/home.page';
-import { EarningsPage } from './modules/view/pages/earnings/earnings.page';
-import { OverviewPage } from './modules/view/pages/overview/overview.page';
-import { ViewComponent } from './modules/view/view.component';
+import { LiquidityComponent } from './modules/liquidity/liquidity.component';
+import { EarningsPage } from './modules/liquidity/pages/earnings/earnings.page';
+import { OverviewPage } from './modules/liquidity/pages/overview/overview.page';
+import { SystemIncomePage } from './modules/system/profitability/pages/systemincome/systemincome.page';
+import { ProfitabilityComponent } from './modules/system/profitability/profitability.component';
 
 export const routes: Routes = [
   {
     path: "", pathMatch: "full", component: HomePage
   },
   {
-    path: ":address", loadChildren: () => import("../app/modules/view/view.module").then(x => x.ViewModule), component: ViewComponent
+    path: "liquidity", pathMatch: "full",
+    redirectTo: ""
+  },
+  {
+    path: "liquidity/:address", component: LiquidityComponent,
+    loadChildren: () => import("./modules/liquidity/liquidity.module").then(x => x.LiquidityModule)
+  },
+  {
+    path: "system/profitability", component: ProfitabilityComponent,
+    loadChildren: () => import("./modules/system/profitability/profitability.module").then(x => x.ProfitabilityModule)
   }
 ];
 
-export const viewRoutes: Routes = [
+export const liquiditySubRoutes: Routes = [
   {
     path: "", pathMatch: "full", redirectTo: "overview"
   },
@@ -25,6 +36,12 @@ export const viewRoutes: Routes = [
     path: "earnings", component: EarningsPage
   }
 ];
+
+export const profitabilitySubRoutes: Routes = [
+  {
+    path: "", pathMatch: "full", component: SystemIncomePage
+  }
+]
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
