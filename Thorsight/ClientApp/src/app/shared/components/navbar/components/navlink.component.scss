@@ -2,10 +2,6 @@ hr {
   margin: 0;
 }
 
-.push-down {
-  margin-top: auto;
-}
-
 a {
   display: flex;
   justify-content: center;
@@ -15,6 +11,18 @@ a {
   vertical-align: middle;
 }
 
-:host([ng-reflect-pushdown=true]) {
+:host(.push-down) {
   margin-top: auto;
+}
+
+#top-hr {
+  display: none;
+}
+
+:host(.push-down) #top-hr {
+  display: block;
+}
+
+:host(.push-down) #bottom-hr {
+  display: none;
 }

@@ -3,7 +3,7 @@
     <nav-component (drawerToggle)="drawer.toggle()">
       <navlink-component [route]="'overview'">Overview</navlink-component>
       <navlink-component [route]="'earnings'">Earnings</navlink-component>
-      <navlink-component [route]="''" [pushdown]="true">Change Address</navlink-component>
+      <navlink-component class="push-down" [route]="''">Change Address</navlink-component>
     </nav-component>
   </mat-drawer>
   <mat-drawer-content>
