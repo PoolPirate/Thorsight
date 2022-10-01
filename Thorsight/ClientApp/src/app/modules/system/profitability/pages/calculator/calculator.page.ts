@@ -25,6 +25,7 @@ export class ProfitabilityCalculatorPage extends BaseComponent implements OnInit
   systemIncomeGraph: SystemIncomeGraph = null!;
 
   yearsTimeFrameForm: FormControl = new FormControl("-");
+  averageBlockTimeForm: FormControl = new FormControl("-");
 
   emissionCurveForm: FormControl = new FormControl("-");
 
@@ -38,6 +39,9 @@ export class ProfitabilityCalculatorPage extends BaseComponent implements OnInit
 
   get yearsTimeFrame(): number { return this.yearsTimeFrameForm.value }
   set yearsTimeFrame(value: number) { this.yearsTimeFrameForm.setValue(value) }
+
+  get averageBlockTime(): number { return this.averageBlockTimeForm.value }
+  set averageBlockTime(value: number) { this.averageBlockTimeForm.setValue(value) }
 
   get emissionCurve(): number { return this.emissionCurveForm.value }
   set emissionCurve(value: number) { this.emissionCurveForm.setValue(Math.round(100 * value) / 100) }
@@ -69,21 +73,22 @@ export class ProfitabilityCalculatorPage extends BaseComponent implements OnInit
       return;
     }
 
-    this.cache.onContentUpdated.pipe(first()).subscribe(() => {
+    this.cache.onContentUpdated.pipe(first(() => this.cache.complete)).subscribe(() => {
       this.reset();
     });
   }
 
   reset() {
     this.yearsTimeFrame = 10;
+    this.averageBlockTime = this.cache.systemPerformance!.averageBlockTime;
 
-    this.emissionCurve = 6;
-    this.reserveBalance = 500000000 * 0.44;
+    this.emissionCurve = 8;
+    this.reserveBalance = 120000000;
     this.reserveIncome = 0.2;
     this.reserveIncomeChange = 1.1;
 
     this.feePerVolume = this.totalLiquidityFee / this.totalSwapVolume;
-    this.swapVolume = this.totalSwapVolume / (this.cache.dayCount * 24 * 60 * 60 / 5);
+    this.swapVolume = this.cache.systemPerformance!.averageVolumePerBlock;
     this.volumeChange = 1.1;
 
     this.changeTracker.detectChanges();

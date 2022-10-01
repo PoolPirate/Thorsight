@@ -10,6 +10,8 @@ import { BaseComponent } from "../../../../../../../shared/component/base.compon
 })
 export class ReserveBalanceGraph extends BaseComponent implements AfterViewInit {
   @Input()
+  averageBlockTime: number = 5;
+  @Input()
   durationYears: number = 10;
   @Input()
   startBalance: number = 0;
@@ -20,12 +22,12 @@ export class ReserveBalanceGraph extends BaseComponent implements AfterViewInit 
   @Input()
   emissionCurve: number = 8;
 
-  blocksPerYear = 5256000;
+  blocksPerYear = 365 * 24 * 60 * 60 / this.averageBlockTime;
   runeSupply = 500000000;
 
   duration = this.durationYears * this.blocksPerYear;
 
-  checkpoints = 64;
+  checkpoints = 50;
   checkpointInterval = this.duration / this.checkpoints;
 
   graphEntries: SeriesOption[] = [];

@@ -6,6 +6,11 @@
 </mat-form-field>
 
 <mat-form-field appearance="fill">
+  <mat-label>Average Block Time (Seconds)</mat-label>
+  <input matInput [formControl]="averageBlockTimeForm" required>
+</mat-form-field>
+
+<mat-form-field appearance="fill">
   <mat-label>Emission Curve</mat-label>
   <input matInput [formControl]="emissionCurveForm" required>
 </mat-form-field>
@@ -30,7 +35,7 @@
 <br />
 
 <mat-form-field appearance="fill">
-  <mat-label>Swap Volume</mat-label>
+  <mat-label>Per Block Swap Volume</mat-label>
   <input matInput [formControl]="swapVolumeForm" required>
 </mat-form-field>
 
@@ -50,9 +55,9 @@
 
 <hr />
 <br />
-<h2>System Income</h2>
-<system-income-graph [startBalance]="reserveBalance" [startPerBlockIncome]="reserveIncome"
-                     [durationYears]="yearsTimeFrame"
+<h2>System Rewards</h2>
+<system-income-graph [durationYears]="yearsTimeFrame" [averageBlockTime]="averageBlockTime"
+                     [startBalance]="reserveBalance" [startPerBlockIncome]="reserveIncome"
                      [yearIncomeChange]="reserveIncomeChange" [emissionCurve]="emissionCurve"
                      [startVolume]="swapVolume" [yearlyVolumeChange]="volumeChange"
                      [feePerVolume]="feePerVolume">
@@ -62,8 +67,8 @@
 <br />
 <h2>Reserve Balance & Income</h2>
 
-<reserve-balance-graph [startBalance]="reserveBalance" [startPerBlockIncome]="reserveIncome"
-                       [durationYears]="yearsTimeFrame"
+<reserve-balance-graph [durationYears]="yearsTimeFrame" [averageBlockTime]="averageBlockTime"
+                       [startBalance]="reserveBalance" [startPerBlockIncome]="reserveIncome"
                        [yearIncomeChange]="reserveIncomeChange" [emissionCurve]="emissionCurve">
 </reserve-balance-graph>
 
@@ -71,8 +76,8 @@
 <br />
 <h2>Block Rewards & APR</h2>
 
-<block-rewards-graph [startBalance]="reserveBalance" [startPerBlockIncome]="reserveIncome"
-                     [durationYears]="yearsTimeFrame"
+<block-rewards-graph [durationYears]="yearsTimeFrame" [averageBlockTime]="averageBlockTime"
+                     [startBalance]="reserveBalance" [startPerBlockIncome]="reserveIncome"
                      [yearIncomeChange]="reserveIncomeChange" [emissionCurve]="emissionCurve">
 </block-rewards-graph>
 

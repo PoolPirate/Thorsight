@@ -11,6 +11,43 @@ public class QueryClient : Singleton
     [Inject]
     private readonly MidgardClient Midgard;
 
+    public async Task<SystemPerformanceInfoDto> GetSystemPerformanceAsync(CancellationToken cancellationToken)
+    {
+        string sql =
+            """
+            WITH blocktimes AS (
+              SELECT DISTINCT a1.block_timestamp AS b1, a2.block_timestamp AS b2
+              FROM flipside_prod_db.thorchain.prices a1, flipside_prod_db.thorchain.prices a2
+              WHERE a1.block_id = a2.block_id + 1 AND a1.block_timestamp >= CURRENT_DATE - 30 AND DATE_TRUNC('day', a1.block_timestamp) != CURRENT_DATE 
+            ),
+            blocks AS 
+            (
+              SELECT DISTINCT block_id, block_timestamp
+              FROM flipside_prod_db.thorchain.prices
+              WHERE block_timestamp >= CURRENT_DATE - 30 AND DATE_TRUNC('day', block_timestamp) != CURRENT_DATE 
+            ),
+            dailyblocks AS (
+              SELECT DATE_TRUNC('day', block_timestamp) AS day, count(DISTINCT block_id) AS bc
+              FROM blocks
+              GROUP BY day
+            ),
+            dailyvol AS (
+              SELECT s.day, sum(swap_volume_rune) / b.bc AS vpb
+              FROM flipside_prod_db.thorchain.daily_pool_stats s
+              JOIN dailyblocks b ON s.day = b.day
+              WHERE s.day >= CURRENT_DATE - 30 AND s.day != CURRENT_DATE
+              GROUP BY s.day, b.day, b.bc
+            )
+
+            SELECT 
+              (SELECT avg(TIMEDIFF(SECOND, b2, b1)) AS v FROM blocktimes WHERE TIMEDIFF(SECOND, b2, b1) < 100),
+              (SELECT avg(vpb) FROM dailyvol)
+            """;
+
+        var performanceInfo = (await Flipside.RunQueryAsync<SystemPerformanceInfo>(sql, cancellationToken: cancellationToken)).First();
+        return new SystemPerformanceInfoDto(performanceInfo.AverageBlockTime, performanceInfo.AverageVolumePerBlock);
+    }
+
     public async Task<SystemStatisticsDto[]> GetSystemIncomeAsync(int days, CancellationToken cancellationToken)
     {
         string sql =

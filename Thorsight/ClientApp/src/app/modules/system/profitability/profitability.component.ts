@@ -29,12 +29,22 @@ export class ProfitabilityComponent extends BaseComponent {
       });
 
     this.loadSystemStatistics();
+    this.loadSystemPerformance();
   }
 
   loadSystemStatistics() {
     this.queryService.getSystemStatisticsHistory(this.cache.dayCount)
       .subscribe(x => {
         this.cache.systemStatisticsHistory = x;
+      }, err => {
+        alert("Failed loading data!");
+      });
+  }
+
+  loadSystemPerformance() {
+    this.queryService.getSystemPerformance()
+      .subscribe(x => {
+        this.cache.systemPerformance = x;
       }, err => {
         alert("Failed loading data!");
       });

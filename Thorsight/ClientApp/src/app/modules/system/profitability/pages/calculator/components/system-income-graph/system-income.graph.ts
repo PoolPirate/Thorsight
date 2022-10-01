@@ -10,6 +10,8 @@ import { BaseComponent } from "../../../../../../../shared/component/base.compon
 })
 export class SystemIncomeGraph extends BaseComponent implements AfterViewInit {
   @Input()
+  averageBlockTime: number = 5;
+  @Input()
   durationYears: number = 10;
   @Input()
   startBalance: number = 0;
@@ -26,12 +28,12 @@ export class SystemIncomeGraph extends BaseComponent implements AfterViewInit {
   @Input()
   feePerVolume: number = 0;
 
-  blocksPerYear = 6307200;
+  blocksPerYear = 365 * 24 * 60 * 60 / this.averageBlockTime;
   runeSupply = 500000000;
 
   duration = this.durationYears * this.blocksPerYear;
 
-  checkpoints = 64;
+  checkpoints = 50;
   checkpointInterval = this.duration / this.checkpoints;
 
   graphEntries: SeriesOption[] = [];
@@ -87,12 +89,16 @@ export class SystemIncomeGraph extends BaseComponent implements AfterViewInit {
       name: "Block Rewards",
       type: "line",
       smooth: true,
+      stack: "counts",
+      areaStyle: {},
       data: blockRewards
     };
     const liquidityFeeSeries: SeriesOption = {
       name: "Liquidity Fees",
       type: "line",
       smooth: true,
+      stack: "counts",
+      areaStyle: {},
       data: liquidityFees
     };
 

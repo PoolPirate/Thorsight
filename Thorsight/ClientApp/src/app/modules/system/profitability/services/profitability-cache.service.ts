@@ -1,15 +1,16 @@
 import { Injectable } from "@angular/core";
 import { Observable, Subject } from "rxjs";
-import { SystemStatistics } from "../../../../core/models/models";
+import { SystemPerformance, SystemStatistics } from "../../../../core/models/models";
 
 @Injectable()
 export class ProfitabilityCacheService {
   private _dayCount: number = 30;
 
   private _systemStatisticsHistory: SystemStatistics[] | null = null;
+  private _systemPerformance: SystemPerformance | null = null;
 
   get complete() {
-    return this._systemStatisticsHistory != null;
+    return this._systemStatisticsHistory != null && this._systemPerformance != null;
   }
 
   get dayCount() {
@@ -18,6 +19,9 @@ export class ProfitabilityCacheService {
   get systemStatisticsHistory() {
     return this._systemStatisticsHistory;
   }
+  get systemPerformance() {
+    return this._systemPerformance;
+  }
 
   set dayCount(value: number) {
     this._dayCount = value;
@@ -25,6 +29,10 @@ export class ProfitabilityCacheService {
   }
   set systemStatisticsHistory(value: SystemStatistics[] | null) {
     this._systemStatisticsHistory = value;
+    this.contentUpdatedSubject.next();
+  }
+  set systemPerformance(value: SystemPerformance | null) {
+    this._systemPerformance = value;
     this.contentUpdatedSubject.next();
   }
 

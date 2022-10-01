@@ -1,3 +1,8 @@
+export class SystemPerformance {
+  averageBlockTime!: number;
+  averageVolumePerBlock!: number;
+}
+
 export class SystemStatistics {
   timestamp!: string;
 

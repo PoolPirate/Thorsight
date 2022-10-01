@@ -2,21 +2,21 @@
 
 public class PositionSnapshotDto
 {
-    public DateTime Timestamp { get; private set; }
-    public string PoolName { get; private set; }
-    public decimal AssetPrice { get; private set; }
+    public DateTime Timestamp { get; }
+    public string PoolName { get; }
+    public decimal AssetPrice { get; }
 
-    public long CurrentStakeUnits { get; private set; }
-    public decimal TotalStakeUnits { get; private set; }
+    public long CurrentStakeUnits { get; }
+    public decimal TotalStakeUnits { get; }
 
-    public decimal ValueUSD { get; private set; }
-    public decimal BreakEvenValue { get; private set; }
+    public decimal ValueUSD { get; }
+    public decimal BreakEvenValue { get; }
 
-    public decimal AssetAmount { get; private set; }
-    public decimal RuneAmount { get; private set; }
+    public decimal AssetAmount { get; }
+    public decimal RuneAmount { get; }
 
-    public decimal DepositRuneValue { get; private set; }
-    public decimal DepositAssetValue { get; private set; }
+    public decimal DepositRuneValue { get; }
+    public decimal DepositAssetValue { get; }
 
     public PositionSnapshotDto(DateTime timestamp, string poolName, decimal assetPrice, long currentStakeUnits, decimal totalStakeUnits,
         decimal valueUSD, decimal breakEvenPrice, decimal assetAmount, decimal runeAmount, decimal depositRuneValue, decimal depositAssetValue)

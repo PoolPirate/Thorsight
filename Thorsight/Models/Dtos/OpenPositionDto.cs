@@ -2,15 +2,15 @@
 
 public class OpenPositionDto
 {
-    public DateTimeOffset Timestamp { get; private set; }
-    public string PoolName { get; private set; }
-    public ulong CurrentStakeUnits { get; private set; }
-    public decimal TotalStakeUnits { get; private set; }
+    public DateTimeOffset Timestamp { get; }
+    public string PoolName { get; }
+    public ulong CurrentStakeUnits { get; }
+    public decimal TotalStakeUnits { get; }
 
-    public decimal ValueUSD { get; private set; }
+    public decimal ValueUSD { get; }
 
-    public decimal AssetAmount { get; private set; }
-    public decimal RuneAmount { get; private set; }
+    public decimal AssetAmount { get; }
+    public decimal RuneAmount { get; }
 
     public OpenPositionDto(DateTimeOffset timestamp, string poolName, ulong currentStakeUnits, ulong totalStakeUnits, decimal valueUSD,
         decimal assetAmount, decimal runeAmount)

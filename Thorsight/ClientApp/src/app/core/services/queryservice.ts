@@ -1,7 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable, timeout } from "rxjs";
-import { LiquidityAction, OpenPosition, PoolStatistics, PositionSnapshot, SystemStatistics } from "../models/models";
+import { LiquidityAction, OpenPosition, PoolStatistics, PositionSnapshot, SystemPerformance, SystemStatistics } from "../models/models";
 import { Location, LocationStrategy } from '@angular/common';
 
 @Injectable()
@@ -16,6 +16,13 @@ export class QueryService {
     return this.httpClient.get<SystemStatistics[]>(this.apiUrl + "SystemIncome", {
       params: { 'days': days }
     })
+      .pipe(
+        timeout(60000)
+      );
+  }
+
+  public getSystemPerformance(): Observable<SystemPerformance> {
+    return this.httpClient.get<SystemPerformance>(this.apiUrl + "SystemPerformance")
       .pipe(
         timeout(60000)
       );

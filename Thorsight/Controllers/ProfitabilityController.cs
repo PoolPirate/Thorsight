@@ -16,9 +16,16 @@ public class ProfitabilityController : ControllerBase
     }
 
     [HttpGet("SystemIncome")]
+    [ResponseCache(Duration = 3600, Location = ResponseCacheLocation.Client)]
     public async Task<SystemStatisticsDto[]> GetSystemIncomeAsync([FromQuery][Range(7, 180)] int days,
         CancellationToken cancellationToken)
         => (await QueryClient.GetSystemIncomeAsync(days, cancellationToken))
             .OrderBy(x => x.Timestamp)
             .ToArray();
+
+    [HttpGet("SystemPerformance")]
+    [ResponseCache(Duration = 3600, Location = ResponseCacheLocation.Client)]
+    public async Task<SystemPerformanceInfoDto> GetSystemPerformanceAsync(CancellationToken cancellationToken)
+        => await QueryClient.GetSystemPerformanceAsync(cancellationToken);
+
 }

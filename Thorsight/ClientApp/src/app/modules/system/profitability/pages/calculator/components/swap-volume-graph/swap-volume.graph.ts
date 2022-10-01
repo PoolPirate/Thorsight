@@ -16,7 +16,7 @@ export class SwapVolumeProjectionGraph extends BaseComponent implements AfterVie
   @Input()
   yearlyVolumeChange: number = 1;
 
-  checkpoints = 64;
+  checkpoints = 50;
 
   graphEntries: SeriesOption[] = [];
   options: EChartsOption = null!;
@@ -46,6 +46,7 @@ export class SwapVolumeProjectionGraph extends BaseComponent implements AfterVie
       name: "Swap Volume",
       type: "line",
       smooth: true,
+      areaStyle: {},
       data: swapVolumes
     };
 
