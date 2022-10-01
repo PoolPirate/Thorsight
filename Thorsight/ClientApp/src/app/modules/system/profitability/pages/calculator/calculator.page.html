@@ -1,0 +1,84 @@
+<h1>Profitability Calculator</h1>
+
+<mat-form-field appearance="fill">
+  <mat-label>Timeframe (Years)</mat-label>
+  <input matInput [formControl]="yearsTimeFrameForm" required>
+</mat-form-field>
+
+<mat-form-field appearance="fill">
+  <mat-label>Emission Curve</mat-label>
+  <input matInput [formControl]="emissionCurveForm" required>
+</mat-form-field>
+
+<br />
+
+<mat-form-field appearance="fill">
+  <mat-label>Initial Reserve Balance</mat-label>
+  <input matInput [formControl]="reserveBalanceForm" required>
+</mat-form-field>
+
+<mat-form-field appearance="fill">
+  <mat-label>Initial Reserve Income (Per Block)</mat-label>
+  <input matInput [formControl]="reserveIncomeForm" required>
+</mat-form-field>
+
+<mat-form-field appearance="fill">
+  <mat-label>Reserve Income Change (% Per Year)</mat-label>
+  <input matInput [formControl]="reserveIncomeChangeForm" required>
+</mat-form-field>
+
+<br />
+
+<mat-form-field appearance="fill">
+  <mat-label>Swap Volume</mat-label>
+  <input matInput [formControl]="swapVolumeForm" required>
+</mat-form-field>
+
+<mat-form-field appearance="fill">
+  <mat-label>Yearly Swap Volume Change Percentage</mat-label>
+  <input matInput [formControl]="volumeChangeForm" required>
+</mat-form-field>
+
+<mat-form-field appearance="fill">
+  <mat-label>Fee Per Volume Percentage</mat-label>
+  <input matInput [formControl]="feePerVolumeForm" required>
+</mat-form-field>
+
+<hr />
+
+<button mat-raised-button (click)="generateGraph()">Generate</button>
+
+<hr />
+<br />
+<h2>System Income</h2>
+<system-income-graph [startBalance]="reserveBalance" [startPerBlockIncome]="reserveIncome"
+                     [durationYears]="yearsTimeFrame"
+                     [yearIncomeChange]="reserveIncomeChange" [emissionCurve]="emissionCurve"
+                     [startVolume]="swapVolume" [yearlyVolumeChange]="volumeChange"
+                     [feePerVolume]="feePerVolume">
+</system-income-graph>
+
+<hr />
+<br />
+<h2>Reserve Balance & Income</h2>
+
+<reserve-balance-graph [startBalance]="reserveBalance" [startPerBlockIncome]="reserveIncome"
+                       [durationYears]="yearsTimeFrame"
+                       [yearIncomeChange]="reserveIncomeChange" [emissionCurve]="emissionCurve">
+</reserve-balance-graph>
+
+<hr />
+<br />
+<h2>Block Rewards & APR</h2>
+
+<block-rewards-graph [startBalance]="reserveBalance" [startPerBlockIncome]="reserveIncome"
+                     [durationYears]="yearsTimeFrame"
+                     [yearIncomeChange]="reserveIncomeChange" [emissionCurve]="emissionCurve">
+</block-rewards-graph>
+
+<hr />
+<br />
+<h2>Swap Volume</h2>
+<swap-volume-projection-graph [durationYears] ="yearsTimeFrame"
+                              [startVolume]="swapVolume"
+                              [yearlyVolumeChange]="volumeChange"></swap-volume-projection-graph>

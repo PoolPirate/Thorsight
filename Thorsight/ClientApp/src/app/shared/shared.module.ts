@@ -12,13 +12,19 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { NgxEchartsModule } from 'ngx-echarts';
 import { FooterComponent } from "./components/footer/footer.component";
 import { TooltipComponent } from "./components/tooltip/tooltip.component";
+import { NavComponent } from "./components/navbar/nav.component";
+import { RouterModule } from "@angular/router";
+import { NavLinkComponent } from "./components/navbar/components/navlink.component";
 
 @NgModule({
   declarations: [
     FooterComponent,
-    TooltipComponent
+    TooltipComponent,
+    NavComponent,
+    NavLinkComponent
   ],
   imports: [
+    RouterModule.forChild([]),
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
@@ -57,7 +63,9 @@ import { TooltipComponent } from "./components/tooltip/tooltip.component";
     NgxEchartsModule,
 
     FooterComponent,
-    TooltipComponent
+    TooltipComponent,
+    NavComponent,
+    NavLinkComponent
   ],
   providers: [
 

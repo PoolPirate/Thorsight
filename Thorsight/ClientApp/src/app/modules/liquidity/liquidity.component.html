@@ -1,6 +1,10 @@
 <mat-drawer-container class="app-container" autosize>
   <mat-drawer #drawer mode="side">
-    <nav-component (drawerToggle)="drawer.toggle()"></nav-component>
+    <nav-component (drawerToggle)="drawer.toggle()">
+      <navlink-component [route]="'overview'">Overview</navlink-component>
+      <navlink-component [route]="'earnings'">Earnings</navlink-component>
+      <navlink-component [route]="''" [pushdown]="true">Change Address</navlink-component>
+    </nav-component>
   </mat-drawer>
   <mat-drawer-content>
     <div class="heading">

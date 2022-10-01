@@ -1,6 +1,5 @@
 import { NgModule } from "@angular/core";
 import { OverviewPage } from "./pages/overview/overview.page";
-import { NavComponent } from "./components/navbar/nav.component";
 import { EarningsPage } from "./pages/earnings/earnings.page";
 import { SharedModule } from "../../shared/shared.module";
 import { RouterModule } from "@angular/router";
@@ -17,7 +16,6 @@ import { LiquidityComponent } from "./liquidity.component";
     OverviewPage,
     EarningsPage,
 
-    NavComponent,
     AssetWorthGraph,
     AssetAmountGraph,
     IlpGraph,

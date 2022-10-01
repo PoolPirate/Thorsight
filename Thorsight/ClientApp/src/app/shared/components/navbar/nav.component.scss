@@ -4,16 +4,6 @@
   height: calc(100% - 66px);
 }
 
-a {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  width: 100%;
-  height: 66px;
-  vertical-align: middle;
-}
-
 .heading {
   display: flex;
   flex-direction: row;
@@ -26,11 +16,6 @@ a {
   margin: 0px;
 }
 
-.push-down {
-  margin-top: auto;
-}
 
-hr {
-  margin: 0;
-}
+
 

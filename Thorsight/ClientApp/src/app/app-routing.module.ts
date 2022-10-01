@@ -4,7 +4,8 @@ import { HomePage } from './core/pages/home/home.page';
 import { LiquidityComponent } from './modules/liquidity/liquidity.component';
 import { EarningsPage } from './modules/liquidity/pages/earnings/earnings.page';
 import { OverviewPage } from './modules/liquidity/pages/overview/overview.page';
-import { SystemIncomePage } from './modules/system/profitability/pages/systemincome/systemincome.page';
+import { ProfitabilityCalculatorPage } from './modules/system/profitability/pages/calculator/calculator.page';
+import { ProfitabilityDashboardPage } from './modules/system/profitability/pages/systemincome/dashboard.page';
 import { ProfitabilityComponent } from './modules/system/profitability/profitability.component';
 
 export const routes: Routes = [
@@ -39,7 +40,14 @@ export const liquiditySubRoutes: Routes = [
 
 export const profitabilitySubRoutes: Routes = [
   {
-    path: "", pathMatch: "full", component: SystemIncomePage
+    path: "", pathMatch: "full",
+    redirectTo: "dashboard"
+  },
+  {
+    path: "dashboard", component: ProfitabilityDashboardPage
+  },
+  {
+    path: "calculator", component: ProfitabilityCalculatorPage
   }
 ]
 

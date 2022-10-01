@@ -1,0 +1,20 @@
+hr {
+  margin: 0;
+}
+
+.push-down {
+  margin-top: auto;
+}
+
+a {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 66px;
+  vertical-align: middle;
+}
+
+:host([ng-reflect-pushdown=true]) {
+  margin-top: auto;
+}

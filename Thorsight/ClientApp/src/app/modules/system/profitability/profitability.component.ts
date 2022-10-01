@@ -15,11 +15,18 @@ import { ProfitabilityCacheService } from './services/profitability-cache.servic
   ]
 })
 export class ProfitabilityComponent extends BaseComponent {
-  positionSelector = new FormControl("all");
   daysSelector = new FormControl(30);
 
-  constructor(private route: ActivatedRoute, private cache: ProfitabilityCacheService, private queryService: QueryService) {
+  constructor(private cache: ProfitabilityCacheService, private queryService: QueryService) {
     super();
+
+    this.daysSelector.valueChanges
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(() => {
+        this.cache.dayCount = this.daysSelector.value;
+        this.cache.systemStatisticsHistory = null;
+        this.loadSystemStatistics();
+      });
 
     this.loadSystemStatistics();
   }

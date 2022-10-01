@@ -1,0 +1,6 @@
+<hr *ngIf="pushdown" class="push-down"/>
+
+<a [routerLink]="route">
+  <ng-content></ng-content>
+</a>
+<hr *ngIf="!pushdown" />

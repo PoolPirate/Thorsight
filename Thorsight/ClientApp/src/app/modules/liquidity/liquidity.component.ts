@@ -39,7 +39,7 @@ export class LiquidityComponent extends BaseComponent {
         this.viewCache.dayCount = this.daysSelector.value;
         this.viewCache.allPositionHistories = null;
         this.loadLiquidityPositionHistories(address);
-    })
+      });
   }
 
   get allOpenPositions(): OpenPosition[] {

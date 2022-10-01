@@ -3,11 +3,11 @@ import { BaseComponent } from "../../../../../shared/component/base.component";
 import { ProfitabilityCacheService } from "../../services/profitability-cache.service";
 
 @Component({
-  selector: 'systemincome-page',
-  templateUrl: './systemincome.page.html',
-  styleUrls: ['./systemincome.page.scss']
+  selector: 'dashboard-page',
+  templateUrl: './dashboard.page.html',
+  styleUrls: ['./dashboard.page.scss']
 })
-export class SystemIncomePage extends BaseComponent {
+export class ProfitabilityDashboardPage extends BaseComponent {
   constructor(private cache: ProfitabilityCacheService) {
     super();
   }

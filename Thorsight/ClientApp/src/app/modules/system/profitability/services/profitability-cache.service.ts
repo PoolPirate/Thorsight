@@ -8,6 +8,10 @@ export class ProfitabilityCacheService {
 
   private _systemStatisticsHistory: SystemStatistics[] | null = null;
 
+  get complete() {
+    return this._systemStatisticsHistory != null;
+  }
+
   get dayCount() {
     return this._dayCount;
   }
