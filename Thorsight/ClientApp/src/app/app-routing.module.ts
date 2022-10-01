@@ -23,6 +23,9 @@ export const routes: Routes = [
   {
     path: "system/profitability", component: ProfitabilityComponent,
     loadChildren: () => import("./modules/system/profitability/profitability.module").then(x => x.ProfitabilityModule)
+  },
+  {
+    path: "**", redirectTo: "", pathMatch: "full"
   }
 ];
 
