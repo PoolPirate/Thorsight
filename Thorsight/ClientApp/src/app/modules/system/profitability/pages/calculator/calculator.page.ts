@@ -80,7 +80,7 @@ export class ProfitabilityCalculatorPage extends BaseComponent implements OnInit
 
   reset() {
     this.yearsTimeFrame = 10;
-    this.averageBlockTime = 10000; // this.cache.systemPerformance!.averageBlockTime;
+    this.averageBlockTime = this.cache.systemPerformance!.averageBlockTime;
 
     this.emissionCurve = 8;
     this.reserveBalance = 120000000;
