@@ -28,13 +28,13 @@ export class SystemIncomeGraph extends BaseComponent implements AfterViewInit {
   @Input()
   feePerVolume: number = 0;
 
-  blocksPerYear = 365 * 24 * 60 * 60 / this.averageBlockTime;
-  runeSupply = 500000000;
+  get blocksPerYear() { return 365 * 24 * 60 * 60 / this.averageBlockTime }
+  runeSupply = 500000000 - 100000000; //100M are in standby reserve
 
-  duration = this.durationYears * this.blocksPerYear;
+  get duration() { return this.durationYears * this.blocksPerYear }
 
   checkpoints = 50;
-  checkpointInterval = this.duration / this.checkpoints;
+  get checkpointInterval() { return this.duration / this.checkpoints }
 
   graphEntries: SeriesOption[] = [];
   options: EChartsOption = null!;
@@ -63,7 +63,7 @@ export class SystemIncomeGraph extends BaseComponent implements AfterViewInit {
     for (var i = 0; i < this.duration; i++) {
       const blockReward = currentBalance * perBlockReduction;
 
-      if (i % this.checkpointInterval == 0) {
+      if (i % this.checkpointInterval < 1) {
         balances.push(currentBalance);
         blockRewards.push(blockReward);
       }
@@ -82,7 +82,6 @@ export class SystemIncomeGraph extends BaseComponent implements AfterViewInit {
       swapVolumes.push(this.startVolume * changeTillCheckpoint);
     }
 
-    console.log(swapVolumes);
     const liquidityFees = swapVolumes.map(x => this.feePerVolume * x);
 
     const blockRewardSeries: SeriesOption = {

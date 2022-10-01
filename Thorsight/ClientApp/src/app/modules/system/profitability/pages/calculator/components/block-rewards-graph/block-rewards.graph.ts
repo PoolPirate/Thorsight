@@ -22,13 +22,13 @@ export class BlockRewardsGraph extends BaseComponent implements AfterViewInit {
   @Input()
   emissionCurve: number = 8;
 
-  blocksPerYear = 365 * 24 * 60 * 60 / this.averageBlockTime;
+  get blocksPerYear() { return 365 * 24 * 60 * 60 / this.averageBlockTime }
   runeSupply = 500000000 - 100000000; //100M are in standby reserve
 
-  duration = this.durationYears * this.blocksPerYear;
+  get duration() { return this.durationYears * this.blocksPerYear }
 
   checkpoints = 50;
-  checkpointInterval = this.duration / this.checkpoints;
+  get checkpointInterval() { return this.duration / this.checkpoints }
 
   graphEntries: SeriesOption[] = [];
   options: EChartsOption = null!;
@@ -46,6 +46,7 @@ export class BlockRewardsGraph extends BaseComponent implements AfterViewInit {
 
   public generateCharts() {
     const perBlockReduction = 1 / (this.blocksPerYear * this.emissionCurve);
+
     const perBlockIncomeGain = Math.pow(this.yearIncomeChange, 1 / this.blocksPerYear);
 
     const balances: number[] = [];
@@ -57,7 +58,7 @@ export class BlockRewardsGraph extends BaseComponent implements AfterViewInit {
     for (var i = 0; i < this.duration; i++) {
       const blockReward = currentBalance * perBlockReduction;
 
-      if (i % this.checkpointInterval == 0) {
+      if (i % this.checkpointInterval < 1) {
         balances.push(currentBalance);
         blockRewards.push(blockReward);
       }
