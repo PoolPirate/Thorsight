@@ -91,7 +91,7 @@ public class QueryClient : Singleton
     public async Task<LiquidityActionDto[]> GetLiquidityActionsAsync(string address, CancellationToken cancellationToken)
     {
         string sql =
-        """
+        $"""
             SELECT block_timestamp, lp_action, pool_name, (rune_amount_usd + asset_amount_usd) / stake_units AS price_per_unit, stake_units AS units
             FROM flipside_prod_db.thorchain.liquidity_actions
             WHERE from_address = '{address}'
