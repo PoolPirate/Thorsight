@@ -15,25 +15,31 @@ public class QueryClient : Singleton
     {
         string sql =
             """
-            WITH blocktimes AS (
+            WITH 
+            blockprices AS (
+              SELECT b.block_id, p.*
+              FROM thorchain.core.fact_prices p
+              JOIN thorchain.core.dim_block b ON b.dim_block_id = p.dim_block_id 
+            ),
+            blocktimes AS (
               SELECT DISTINCT a1.block_timestamp AS b1, a2.block_timestamp AS b2
-              FROM flipside_prod_db.thorchain.prices a1, flipside_prod_db.thorchain.prices a2
+              FROM blockprices a1, blockprices a2
               WHERE a1.block_id = a2.block_id + 1 AND a1.block_timestamp >= CURRENT_DATE - 30 AND DATE_TRUNC('day', a1.block_timestamp) != CURRENT_DATE 
             ),
             blocks AS 
             (
-              SELECT DISTINCT block_id, block_timestamp
-              FROM flipside_prod_db.thorchain.prices
+              SELECT DISTINCT block_timestamp
+              FROM thorchain.core.fact_prices
               WHERE block_timestamp >= CURRENT_DATE - 30 AND DATE_TRUNC('day', block_timestamp) != CURRENT_DATE 
             ),
             dailyblocks AS (
-              SELECT DATE_TRUNC('day', block_timestamp) AS day, count(DISTINCT block_id) AS bc
+              SELECT DATE_TRUNC('day', block_timestamp) AS day, count(DISTINCT block_timestamp) AS bc
               FROM blocks
               GROUP BY day
             ),
             dailyvol AS (
               SELECT s.day, sum(swap_volume_rune) / b.bc AS vpb
-              FROM flipside_prod_db.thorchain.daily_pool_stats s
+              FROM thorchain.core.fact_daily_pool_stats s
               JOIN dailyblocks b ON s.day = b.day
               WHERE s.day >= CURRENT_DATE - 30 AND s.day != CURRENT_DATE
               GROUP BY s.day, b.day, b.bc
@@ -54,18 +60,18 @@ public class QueryClient : Singleton
           $"""
            WITH volume AS (
              SELECT day, sum(swap_volume_rune)
-             FROM flipside_prod_db.thorchain.daily_pool_stats
+             FROM thorchain.core.fact_daily_pool_stats
              WHERE day >= CURRENT_DATE - {days} AND day != CURRENT_DATE
              GROUP BY day
            ),
            earnings AS (
              SELECT day, liquidity_fee, block_rewards, bonding_earnings / earnings AS e
-             FROM flipside_prod_db.thorchain.block_rewards
+             FROM thorchain.core.fact_block_rewards
              WHERE day >= CURRENT_DATE - {days} AND day != CURRENT_DATE
            ),
            prices AS (
              SELECT DATE_TRUNC('day', block_timestamp) AS day, avg(rune_usd) AS a
-             FROM flipside_prod_db.thorchain.prices
+             FROM thorchain.core.fact_prices
              WHERE day >= CURRENT_DATE - {days} AND day != CURRENT_DATE
              GROUP BY day
            )
@@ -85,9 +91,11 @@ public class QueryClient : Singleton
     public async Task<LiquidityActionDto[]> GetLiquidityActionsAsync(string address, CancellationToken cancellationToken)
     {
         string sql =
-            "SELECT block_timestamp, lp_action, pool_name, (rune_amount_usd + asset_amount_usd) / stake_units AS price_per_unit, stake_units AS units " +
-            "FROM flipside_prod_db.thorchain.liquidity_actions " +
-            "WHERE from_address = '" + address + "'";
+        """
+            SELECT block_timestamp, lp_action, pool_name, (rune_amount_usd + asset_amount_usd) / stake_units AS price_per_unit, stake_units AS units
+            FROM flipside_prod_db.thorchain.liquidity_actions
+            WHERE from_address = '{address}'
+        """;
 
         var actions = await Flipside.RunQueryAsync<LiquidityAction>(sql, cancellationToken: cancellationToken);
         return actions
@@ -98,10 +106,12 @@ public class QueryClient : Singleton
     public async Task<OpenPositionDto[]> GetCurrentPositionsAsync(string address, CancellationToken cancellationToken)
     {
         string sql =
-            "SELECT CURRENT_TIMESTAMP AS time, pool_name, sum(CASE WHEN LP_ACTION = 'add_liquidity' THEN stake_units ELSE -stake_units END) AS current_stake_units " +
-            "FROM flipside_prod_db.thorchain.liquidity_actions " +
-            "WHERE from_address = '" + address + "' " +
-            "GROUP BY pool_name";
+        $"""
+            SELECT CURRENT_TIMESTAMP AS time, pool_name, sum(CASE WHEN LP_ACTION = 'add_liquidity' THEN stake_units ELSE -stake_units END) AS current_stake_units
+            FROM thorchain.core.fact_liquidity_actions
+            WHERE from_address = '{address}'
+            GROUP BY pool_name
+        """;
 
         var positions = await Flipside.RunQueryAsync<OpenPosition>(sql, cancellationToken: cancellationToken);
 
@@ -131,15 +141,17 @@ public class QueryClient : Singleton
 
     public async Task<PositionSnapshotDto[]> GetPositionHistoryAsync(string address, int days, CancellationToken cancellationToken)
     {
-        string sql =
-         "SELECT a.block_timestamp, lp_action, a.pool_name, (a.rune_amount_usd + a.asset_amount_usd) / a.stake_units AS price_per_unit, a.stake_units AS units, " +
-         "(a.asset_amount / 2) * (b.rune_amount / b.asset_amount) + (a.rune_amount / 2) AS deposit_rune_value, " +
-         "(a.rune_amount / 2) * (b.asset_amount / b.rune_amount) + (a.asset_amount / 2) AS deposit_asset_value, " +
-         "COALESCE(u.basis_points, 0) AS withdraw_basis_points " +
-         "FROM flipside_prod_db.thorchain.liquidity_actions a " +
-         "JOIN flipside_prod_db.thorchain.pool_block_balances b ON a.block_id = b.block_id AND a.pool_name = b.pool_name " +
-         "LEFT JOIN flipside_prod_db.thorchain.unstake_events u ON a.block_id = u.block_id AND a.tx_id = u.tx_id AND a.pool_name = u.pool_name AND a.to_address = u.to_address AND a.from_address = u.from_address AND a.stake_units = u.stake_units " +
-        $"WHERE a.from_address = '{address}'";
+        string sql = 
+        $"""
+            SELECT a.block_timestamp, lp_action, a.pool_name, (a.rune_amount_usd + a.asset_amount_usd) / a.stake_units AS price_per_unit, a.stake_units AS units,
+            (a.asset_amount / 2) * (b.rune_amount / b.asset_amount) + (a.rune_amount / 2) AS deposit_rune_value, 
+            (a.rune_amount / 2) * (b.asset_amount / b.rune_amount) + (a.asset_amount / 2) AS deposit_asset_value,
+            COALESCE(u.basis_points, 0) AS withdraw_basis_points
+            FROM thorchain.core.fact_liquidity_actions a
+            JOIN thorchain.core.fact_pool_block_balances b ON a.dim_block_id = b.dim_block_id AND a.pool_name = b.pool_name
+            LEFT JOIN thorchain.core.fact_unstake_events u ON a.dim_block_id = u.dim_block_id AND a.tx_id = u.tx_id AND a.pool_name = u.pool_name AND a.to_address = u.to_address AND a.from_address = u.from_address AND a.stake_units = u.stake_units
+            WHERE a.from_address = '{address}'
+        """;
 
         var now = DateTime.UtcNow;
         var currentDay = now.Subtract(now.TimeOfDay);
