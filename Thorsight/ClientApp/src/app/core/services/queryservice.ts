@@ -17,28 +17,28 @@ export class QueryService {
       params: { 'days': days }
     })
       .pipe(
-        timeout(60000)
+        timeout(90000)
       );
   }
 
   public getSystemPerformance(): Observable<SystemPerformance> {
     return this.httpClient.get<SystemPerformance>(this.apiUrl + "SystemPerformance")
       .pipe(
-        timeout(60000)
+        timeout(90000)
       );
   }
 
   public getLiquidityActions(address: string): Observable<LiquidityAction[]> {
     return this.httpClient.get<LiquidityAction[]>(this.apiUrl + "LiquidityActions/" + address)
       .pipe(
-        timeout(60000),
+        timeout(90000),
       );
   }
 
   public getOpenLiquidityPositions(address: string): Observable<OpenPosition[]> {
     return this.httpClient.get<OpenPosition[]>(this.apiUrl + "LiquidityPositions/" + address)
       .pipe(
-        timeout(60000),
+        timeout(90000),
       );
   }
 
@@ -47,7 +47,7 @@ export class QueryService {
       params: { 'days': days }
     })
       .pipe(
-        timeout(120000),
+        timeout(150000),
       );
   }
 }
