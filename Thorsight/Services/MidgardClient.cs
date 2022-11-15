@@ -1,4 +1,5 @@
 ﻿using Common.Services;
+using System.Threading;
 using Thorsight.Models.MidgardAPI;
 using Thorsight.Models.MidgardAPI.Responses;
 
@@ -9,15 +10,24 @@ public class MidgardClient : Singleton
     [Inject]
     private readonly HttpClient Client;
 
-    public async Task<PoolInfo[]> GetPoolsAsync()
-        => (await Client.GetFromJsonAsync<PoolInfo[]>("https://midgard.thorchain.info/v2/pools"))
-        ?? throw new Exception("Failed parsing result from Midgard!");
-
-    public async Task<PoolInfo?> GetPoolAsync(string asset)
+    public async Task<PoolInfo[]> GetPoolsAsync(CancellationToken cancellationToken)
     {
         try
         {
-            return await Client.GetFromJsonAsync<PoolInfo>($"https://midgard.thorchain.info/v2/pool/{asset}");
+            return await GetFromMidgardAsync<PoolInfo[]>("pools", cancellationToken)
+                ?? throw new Exception("Failed to get Pools from Midgard!");
+        }
+        catch
+        {
+            throw new Exception("Failed to get Pools from Midgard!"); ;
+        }
+    }
+
+    public async Task<PoolInfo?> GetPoolAsync(string asset, CancellationToken cancellationToken)
+    {
+        try
+        {
+            return await GetFromMidgardAsync<PoolInfo>($"pool/{asset}", cancellationToken);
         }
         catch
         {
@@ -30,13 +40,27 @@ public class MidgardClient : Singleton
     {
         try
         {
-            var response = await Client.GetFromJsonAsync<PoolDepthPriceHistoryResponse>(
-                $"https://midgard.thorchain.info/v2/history/depths/{asset}?interval=day&count={days + 1}", cancellationToken);
-            return response?.Intervals;
+            var result = await GetFromMidgardAsync<PoolDepthPriceHistoryResponse>($"history/depths/{asset}?interval=day&count={days + 1}", cancellationToken);
+            return result?.Intervals;
         }
         catch
         {
             return null;
         }
+    }
+
+    private async Task<T?> GetFromMidgardAsync<T>(string relativeURL, CancellationToken cancellationToken)
+    {
+        var request = new HttpRequestMessage(HttpMethod.Get, $"https://midgard.ninerealms.com/v2/{relativeURL}");
+        request.Headers.Add("x-client-id", "thorsight");
+
+        var response = await Client.SendAsync(request, cancellationToken);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            return default;
+        }
+
+        return await response.Content.ReadFromJsonAsync<T>();
     }
 }
