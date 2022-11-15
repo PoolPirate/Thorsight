@@ -119,7 +119,7 @@ public class QueryClient : Singleton
 
         foreach (var position in positions)
         {
-            var pool = await Midgard.GetPoolAsync(position.PoolName);
+            var pool = await Midgard.GetPoolAsync(position.PoolName, cancellationToken);
 
             if (pool is null)
             {
