@@ -93,7 +93,7 @@ public class QueryClient : Singleton
         string sql =
         $"""
             SELECT block_timestamp, lp_action, pool_name, (rune_amount_usd + asset_amount_usd) / stake_units AS price_per_unit, stake_units AS units
-            FROM flipside_prod_db.thorchain.liquidity_actions
+            FROM thorchain.core.fact_liquidity_actions
             WHERE from_address = '{address}'
         """;
 
